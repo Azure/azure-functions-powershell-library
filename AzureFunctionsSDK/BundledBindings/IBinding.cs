@@ -6,11 +6,14 @@ namespace AzureFunctionsSDK.BundledBindings
     public abstract class IBinding
     {
         public IBinding() { } //This is necessary for Activator
-        public abstract string BindingName { get; }
+        public abstract string BindingAttributeName { get; }
+        public abstract string BindingType { get; }
+
+        public List<BindingInformation> defaultOutputBindings = new List<BindingInformation>();
 
         public bool BindingMatches(AttributeAst attribute)
         {
-            if (attribute.TypeName.Name == BindingName)
+            if (attribute.TypeName.Name == BindingAttributeName)
             {
                 return true;
             }
@@ -24,5 +27,11 @@ namespace AzureFunctionsSDK.BundledBindings
                 BindingExtractor.addSupportedBinding(this);
             }
         }
+
+        public bool ShouldUseDefaultOutputBindings(List<BindingInformation> existingOutputBindings)
+        {
+            return false;
+        }
+
     }
 }

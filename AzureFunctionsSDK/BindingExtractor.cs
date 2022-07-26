@@ -17,7 +17,6 @@ namespace AzureFunctionsSDK
                                                 .Where(type => type.IsSubclassOf(typeof(IBinding)));
             foreach (Type type in types)
             {
-                Console.WriteLine(type.Name);
                 try
                 {
                     var obj = Activator.CreateInstance(type);
@@ -26,7 +25,7 @@ namespace AzureFunctionsSDK
                         ((IBinding)obj).AddToExtractor();
                     }
                 }
-                catch (MissingMethodException ex)
+                catch (MissingMethodException)
                 {
                     //Do nothing, it's an abstract class or improperly declared. 
                 }
@@ -47,9 +46,8 @@ namespace AzureFunctionsSDK
             return false;
         }
 
-        public static BindingInformation? extractInputBinding(AttributeAst attribute, ParameterAst parameter)
+        public static BindingInformation? ExtractInputBinding(AttributeAst attribute, ParameterAst parameter)
         {
-            Console.WriteLine($"Parsing attribute {attribute.TypeName.Name}");
             List<IInputBinding> inputBindings = supportedBindings.Where(x => x is IInputBinding).Cast<IInputBinding>().ToList();
             List<BindingInformation> bindings = new List<BindingInformation>();
             foreach (IInputBinding binding in inputBindings)
@@ -62,7 +60,7 @@ namespace AzureFunctionsSDK
             return null;
         }
 
-        public static BindingInformation? extractOutputBinding(AttributeAst attribute)
+        public static BindingInformation? ExtractOutputBinding(AttributeAst attribute)
         {
             List<IOutputBinding> outputBindings = supportedBindings.Where(x => x is IOutputBinding).Cast<IOutputBinding>().ToList();
             List<BindingInformation> bindings = new List<BindingInformation>();
@@ -74,6 +72,27 @@ namespace AzureFunctionsSDK
                 }
             }
             return null;
+        }
+
+        public static List<BindingInformation> GetDefaultBindings(List<BindingInformation> existingInputBindings, List<BindingInformation> existingOutputBindings)
+        {
+            List<BindingInformation> defaultBindings = new List<BindingInformation>();
+            foreach (BindingInformation existingInputBinding in existingInputBindings)
+            {
+                List<IBinding> matchingSupportedBindings = supportedBindings.Where(x => x.BindingType == existingInputBinding.Type).ToList();
+
+                if (matchingSupportedBindings.Count() > 0)
+                {
+                    foreach (IBinding matchingSupportedBinding in matchingSupportedBindings)
+                    {
+                        if (matchingSupportedBinding.ShouldUseDefaultOutputBindings(existingOutputBindings))
+                        {
+                            defaultBindings.AddRange(matchingSupportedBinding.defaultOutputBindings);
+                        }
+                    }
+                }
+            }
+            return defaultBindings;
         }
     }
 }

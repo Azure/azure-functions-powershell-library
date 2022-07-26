@@ -4,7 +4,9 @@ namespace AzureFunctionsSDK.BundledBindings
 {
     internal class HttpOutputBinding : IOutputBinding
     {
-        public override string BindingName => "HttpOutput";
+        public override string BindingAttributeName => "HttpOutput";
+
+        public override string BindingType => "http";
 
         public override BindingInformation ExtractBinding(AttributeAst attribute)
         {

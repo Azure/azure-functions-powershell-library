@@ -5,14 +5,16 @@ namespace AzureFunctionsSDK.BundledBindings
 {
     public class EventGridTriggerBinding : IInputBinding
     {
-        public override string BindingName => "EventGridTrigger";
+        public override string BindingAttributeName => "EventGridTrigger";
+
+        public override string BindingType => "eventGridTrigger";
 
         public override BindingInformation ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {
             BindingInformation bindingInformation = new BindingInformation();
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
             bindingInformation.Direction = (int)BindingDirection;
-            bindingInformation.Type = "eventGridTrigger";
+            bindingInformation.Type = BindingType;
             return bindingInformation;
         }
     }

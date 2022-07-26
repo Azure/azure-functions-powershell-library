@@ -101,6 +101,37 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             return thisFunction;
         }
 
+        private static List<BindingInformation> GetInputBindingInfo(ParamBlockAst paramBlock)
+        {
+            List<BindingInformation> outputBindingInfo = new List<BindingInformation>();
+            foreach (ParameterAst parameter in paramBlock.Parameters)
+            {
+                foreach (AttributeAst attribute in parameter.Attributes)
+                {
+                    BindingInformation? bindingInfo = BindingExtractor.ExtractInputBinding(attribute, parameter);
+                    if (bindingInfo is not null)
+                    {
+                        outputBindingInfo.Add(bindingInfo);
+                    }
+                }
+            }
+            return outputBindingInfo;
+        }
+
+        private static List<BindingInformation> GetOutputBindingInfo(ReadOnlyCollection<AttributeAst> attributes)
+        {
+            List<BindingInformation> outputBindingInfo = new List<BindingInformation>();
+            foreach (AttributeAst attribute in attributes)
+            {
+                BindingInformation? bindingInformation = BindingExtractor.ExtractOutputBinding(attribute);
+                if (bindingInformation is not null)
+                {
+                    outputBindingInfo.Add(bindingInformation);
+                }
+            }
+            return outputBindingInfo;
+        }
+
         private static void ExtractBindings(FunctionInformation thisFunction, ParamBlockAst paramBlock)
         {
             if (paramBlock == null)
@@ -120,37 +151,10 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
 
             // Then parse output bindings
             List<BindingInformation> outputBindings = GetOutputBindingInfo(paramBlock.Attributes);
-            List<BindingInformation> missingBindings = GetMissingOutputBindings(inputBindings, outputBindings);
+            List<BindingInformation> missingBindings = BindingExtractor.GetDefaultBindings(inputBindings, outputBindings);
             thisFunction.Bindings.AddRange(inputBindings);
             thisFunction.Bindings.AddRange(outputBindings);
             thisFunction.Bindings.AddRange(missingBindings);
-        }
-
-        private static List<BindingInformation> GetMissingOutputBindings(List<BindingInformation> inputBindings, List<BindingInformation> outputBindings)
-        {
-            List<BindingInformation> missingBindings = new List<BindingInformation>();
-            if (inputBindings.Where(x => x.Type == "httpTrigger").Count() > 0 && outputBindings.Where(x => x.Type == "httpOutput").Count() == 0)
-            {
-                missingBindings.Add(HttpOutputBinding.Create());
-            }
-            return missingBindings;
-        }
-
-        private static List<BindingInformation> GetInputBindingInfo(ParamBlockAst paramBlock)
-        {
-            List<BindingInformation> outputBindingInfo = new List<BindingInformation>();
-            foreach (ParameterAst parameter in paramBlock.Parameters)
-            {
-                foreach (AttributeAst attribute in parameter.Attributes)
-                {
-                    BindingInformation? bindingInfo = BindingExtractor.extractInputBinding(attribute, parameter);
-                    if (bindingInfo is not null)
-                    {
-                        outputBindingInfo.Add(bindingInfo);
-                    }
-                }
-            }
-            return outputBindingInfo;
         }
 
         public static string? GetPositionalArgumentStringValue(AttributeAst attribute, int attributeIndex, string? defaultValue=null)
@@ -158,20 +162,6 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             return attribute.PositionalArguments.Count > attributeIndex 
                    && attribute.PositionalArguments[attributeIndex].GetType() == typeof(StringConstantExpressionAst)
                 ? ((StringConstantExpressionAst)attribute.PositionalArguments[attributeIndex]).Value : defaultValue;
-        }
-
-        private static List<BindingInformation> GetOutputBindingInfo(ReadOnlyCollection<AttributeAst> attributes)
-        {
-            List<BindingInformation> outputBindingInfo = new List<BindingInformation>();
-            foreach (AttributeAst attribute in attributes)
-            {
-                BindingInformation? bindingInformation = BindingExtractor.extractOutputBinding(attribute);
-                if (bindingInformation is not null)
-                {
-                    outputBindingInfo.Add(bindingInformation);
-                }
-            }
-            return outputBindingInfo;
         }
 
         public static List<string>? ExtractOneOrMore(ExpressionAst expressionAst)

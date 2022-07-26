@@ -5,7 +5,14 @@ namespace AzureFunctionsSDK.BundledBindings
 {
     public class HttpTriggerBinding : IInputBinding
     {
-        public override string BindingName => "HttpTrigger";
+        public HttpTriggerBinding()
+        {
+            defaultOutputBindings.Add(HttpOutputBinding.Create());
+        }
+
+        public override string BindingAttributeName => "HttpTrigger";
+
+        public override string BindingType => "httpTrigger";
 
         public override BindingInformation ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {
@@ -23,7 +30,7 @@ namespace AzureFunctionsSDK.BundledBindings
                 bindingMethods = new List<string>() { "GET", "POST" };
             }
             bindingInformation.Direction = (int)BindingDirection;
-            bindingInformation.Type = "httpTrigger";
+            bindingInformation.Type = BindingType;
             if (bindingAuthLevel != null)
             {
                 bindingInformation.otherInformation.Add("authLevel", bindingAuthLevel);
@@ -34,6 +41,11 @@ namespace AzureFunctionsSDK.BundledBindings
                 bindingInformation.otherInformation.Add("route", route);
             }
             return bindingInformation;
+        }
+        
+        public new bool ShouldUseDefaultOutputBindings(List<BindingInformation> existingOutputBindings)
+        {
+            return existingOutputBindings.Where(x => x.Type == "http" && x.Direction == (int)BindingInformation.Directions.Out).Count() == 0;
         }
     }
 }
