@@ -4,8 +4,6 @@
 //
 
 using AzureFunctions.PowerShell.SDK;
-using AzureFunctions.PowerShell.SDK.BundledBindings;
-using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Language;
 
@@ -20,7 +18,6 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                 throw new FileNotFoundException();
             }
             List<FileInfo> powerShellFiles = GetPowerShellFiles(Directory.CreateDirectory(baseDir));
-
             List<FunctionInformation> rpcFunctionMetadatas = new List<FunctionInformation>();
 
             foreach (FileInfo powerShellFile in powerShellFiles)
