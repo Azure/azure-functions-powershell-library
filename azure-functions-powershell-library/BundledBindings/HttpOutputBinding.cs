@@ -1,6 +1,11 @@
-﻿using System.Management.Automation.Language;
+﻿//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//
 
-namespace AzureFunctionsSDK.BundledBindings
+using System.Management.Automation.Language;
+
+namespace AzureFunctions.PowerShell.SDK.BundledBindings
 {
     internal class HttpOutputBinding : IOutputBinding
     {

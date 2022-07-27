@@ -35,6 +35,8 @@ param(
 
 $PowerShellVersion = '7.2'
 $TargetFramework = 'net6.0'
+$ModuleName = 'AzureFunctions.PowerShell.SDK'
+$RepoName = 'azure-functions-powershell-library'
 
 function Get-FunctionsCoreToolsDir {
     if ($CoreToolsDir) {
@@ -65,14 +67,18 @@ function Get-FunctionsCoreToolsDir {
 function Deploy-FunctionsSDKModule {
     $ErrorActionPreference = 'Stop'
 
-    $publishDir = "./AzureFunctionsSDK/bin/$Configuration/$TargetFramework/publish/*" 
+    $publishDir = "./$RepoName/bin/$Configuration/$TargetFramework/publish/*" 
 
-    $powerShellWorkerModuleDir = "$(Get-FunctionsCoreToolsDir)/workers/powershell/$PowerShellVersion/Modules/AzureFunctionsSDK"
+    $powerShellWorkerModuleDir = "$(Get-FunctionsCoreToolsDir)/workers/powershell/$PowerShellVersion/Modules/$ModuleName"
 
     Write-Log "Deploying module to $powerShellWorkerModuleDir..."
 
     if (-not $IsWindows) {
         sudo chmod -R a+w $powerShellWorkerModuleDir
+    }
+
+    if (!(Test-Path $powerShellWorkerModuleDir)) {
+        New-Item $powerShellWorkerModuleDir -ItemType directory
     }
 
     Remove-Item -Path $powerShellWorkerModuleDir/* -Recurse -Force
@@ -119,10 +125,10 @@ if (!$NoBuild.IsPresent) {
 
     dotnet publish -c $Configuration "/p:BuildNumber=$BuildNumber" $PSScriptRoot
 
-    $publishDir = "./AzureFunctionsSDK/bin/$Configuration/$TargetFramework/publish" 
-    $buildDir = "./AzureFunctionsSDK/bin/$Configuration/$TargetFramework" 
+    $publishDir = "./$RepoName/bin/$Configuration/$TargetFramework/publish" 
+    $buildDir = "./$RepoName/bin/$Configuration/$TargetFramework" 
 
-    $psFiles = Get-ChildItem "$PSScriptRoot/AzureFunctionsSDK" | Where-Object -Property Extension -in -Value ".ps1", ".psm1", ".psd1"
+    $psFiles = Get-ChildItem "$PSScriptRoot/$RepoName" | Where-Object -Property Extension -in -Value ".ps1", ".psm1", ".psd1"
 
     $psFiles | ForEach-Object { Copy-Item -Path $_.FullName -Destination $publishDir }
     $psFiles | ForEach-Object { Copy-Item -Path $_.FullName -Destination $buildDir }

@@ -3,8 +3,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 //
 
-using AzureFunctionsSDK;
-using AzureFunctionsSDK.BundledBindings;
+using AzureFunctions.PowerShell.SDK;
+using AzureFunctions.PowerShell.SDK.BundledBindings;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Language;
@@ -20,11 +20,9 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                 throw new FileNotFoundException();
             }
             List<FileInfo> powerShellFiles = GetPowerShellFiles(Directory.CreateDirectory(baseDir));
-            //this is only necessary until we fix the worker init crap
-            powerShellFiles = powerShellFiles.OrderBy(x => x.FullName.Split(Path.DirectorySeparatorChar).Count() - baseDir.Split(Path.DirectorySeparatorChar).Count() == 2 ? 0 : 1).ToList();
 
             List<FunctionInformation> rpcFunctionMetadatas = new List<FunctionInformation>();
-            //rpcFunctionMetadatas.Add(CreateFirstFunction());
+
             foreach (FileInfo powerShellFile in powerShellFiles)
             {
                 rpcFunctionMetadatas.AddRange(IndexFunctionsInFile(powerShellFile));
@@ -39,7 +37,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             var fileAst = Parser.ParseFile(powerShellFile.FullName, out _, out ParseError[] errors);
             if (errors.Any())
             {
-                throw new Exception("Couldn't parse this file");
+                throw new Exception($"Couldn't parse the file: {powerShellFile.FullName}");
                 // TODO: Probably don't throw here?
                 //return fileFunctions;
             }

@@ -1,12 +1,12 @@
-﻿using AzureFunctionsSDK.BundledBindings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation.Language;
-using System.Text;
-using System.Threading.Tasks;
+﻿//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//
 
-namespace AzureFunctionsSDK
+using AzureFunctions.PowerShell.SDK.BundledBindings;
+using System.Management.Automation.Language;
+
+namespace AzureFunctions.PowerShell.SDK
 {
     internal static class BindingExtractor
     {
