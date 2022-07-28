@@ -33,7 +33,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
             }
         }
 
-        public bool ShouldUseDefaultOutputBindings(List<BindingInformation> existingOutputBindings)
+        public virtual bool ShouldUseDefaultOutputBindings(List<BindingInformation> existingOutputBindings)
         {
             return false;
         }

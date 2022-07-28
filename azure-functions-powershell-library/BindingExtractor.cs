@@ -12,14 +12,20 @@ namespace AzureFunctions.PowerShell.SDK
     {
         static BindingExtractor()
         {
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                                                .SelectMany(assembly => assembly.GetTypes())
-                                                .Where(type => type.IsSubclassOf(typeof(IBinding)));
+            // We want this behavior to be extensible by third parties who may want to add binding definitions. 
+            // To accomplish this, we parse through all loaded assemblies to find any class which implements 
+            //   IBinding, and load it manually into our supportedBindings
+
+            // Find all types that implement IBinding
+            IEnumerable<Type>? types = AppDomain.CurrentDomain.GetAssemblies()
+                                                              .SelectMany(assembly => assembly.GetTypes())
+                                                              .Where(type => type.IsSubclassOf(typeof(IBinding)));
             foreach (Type type in types)
             {
                 try
                 {
-                    var obj = Activator.CreateInstance(type);
+                    // Instantiate an object of this type, and call its method to load it into supportedBindings for use later
+                    object? obj = Activator.CreateInstance(type);
                     if (obj is not null)
                     {
                         ((IBinding)obj).AddToExtractor();
@@ -32,6 +38,7 @@ namespace AzureFunctions.PowerShell.SDK
             }
         }
         private static List<IBinding> supportedBindings = new List<IBinding>();
+
         public static void addSupportedBinding(IBinding binding)
         {
             supportedBindings.Add(binding);
@@ -79,12 +86,18 @@ namespace AzureFunctions.PowerShell.SDK
             List<BindingInformation> defaultBindings = new List<BindingInformation>();
             foreach (BindingInformation existingInputBinding in existingInputBindings)
             {
+                // Try to figure out which IBininding class was used to create the BindingInformation 
+                //   Might be worth changing BindingInformation to refer to the instance of IBinding that created it
+                //   Would need to avoid serializing this information when returning to the worker. 
                 List<IBinding> matchingSupportedBindings = supportedBindings.Where(x => x.BindingType == existingInputBinding.Type).ToList();
 
                 if (matchingSupportedBindings.Count() > 0)
                 {
                     foreach (IBinding matchingSupportedBinding in matchingSupportedBindings)
                     {
+                        // Each IBinding is allowed to define its own list of default output bindings. It is also 
+                        // given the responsibility of determining whether these bindings should be used, based on 
+                        // the output bindings that have been explicitly declared 
                         if (matchingSupportedBinding.ShouldUseDefaultOutputBindings(existingOutputBindings))
                         {
                             defaultBindings.AddRange(matchingSupportedBinding.defaultOutputBindings);

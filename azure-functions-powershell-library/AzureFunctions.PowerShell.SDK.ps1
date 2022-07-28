@@ -77,3 +77,27 @@ class ActivityTrigger : Attribute {
 
     }
 }
+
+class EventHubTrigger : Attribute {
+    [string]$eventHubName
+    [string]$consumerGroup
+    [string]$cardinality
+    [string]$connection
+    EventHubTrigger([string]$eventHubName, [string]$consumerGroup, [string]$cardinality, [string]$connection) {
+        $this.eventHubName = $eventHubName
+        $this.consumerGroup = $consumerGroup
+        $this.cardinality = $cardinality
+        $this.connection = $connection
+    }
+}
+
+class EventHubOutput : Attribute {
+    [string]$name
+    [string]$eventHubName
+    [string]$connection
+    EventGridTrigger([string]$name, [string]$eventHubName, [string]$connection) {
+        $this.name = $name
+        $this.eventHubName = $eventHubName
+        $this.connection = $connection
+    }
+}

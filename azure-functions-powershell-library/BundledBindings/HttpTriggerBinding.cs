@@ -48,9 +48,10 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
             return bindingInformation;
         }
         
-        public new bool ShouldUseDefaultOutputBindings(List<BindingInformation> existingOutputBindings)
+        public override bool ShouldUseDefaultOutputBindings(List<BindingInformation> existingOutputBindings)
         {
-            return existingOutputBindings.Where(x => x.Type == "http" && x.Direction == (int)BindingInformation.Directions.Out).Count() == 0;
+            var httpOutputBindings = existingOutputBindings.Where(x => x.Type == "http" && x.Direction == (int)BindingInformation.Directions.Out);
+            return !httpOutputBindings.Any();
         }
     }
 }

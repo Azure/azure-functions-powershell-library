@@ -31,7 +31,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
         private static IEnumerable<FunctionInformation> IndexFunctionsInFile(FileInfo powerShellFile)
         {
             List<FunctionInformation> fileFunctions = new List<FunctionInformation>();
-            var fileAst = Parser.ParseFile(powerShellFile.FullName, out _, out ParseError[] errors);
+            ScriptBlockAst? fileAst = Parser.ParseFile(powerShellFile.FullName, out _, out ParseError[] errors);
             if (errors.Any())
             {
                 throw new Exception($"Couldn't parse the file: {powerShellFile.FullName}");
@@ -41,32 +41,46 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             if (powerShellFile.Extension == ".ps1") 
             {
                 // parse only the file param block, return one RpcFunctionMetadata assuming the file is the entry point
-                var paramAsts = fileAst.ParamBlock;
-                if (paramAsts != null && paramAsts.Attributes.Where(x => x.TypeName.ToString() == "Function").Any()) 
+                ParamBlockAst paramAsts = fileAst.ParamBlock;
+                if (paramAsts != null && paramAsts.Attributes.Where(x => x.TypeName.ToString() == "Function").Any())
                 {
                     // This is a function, return it 
-                    fileFunctions.Add(CreateRpcMetadataFromFile(powerShellFile.FullName));
+                    FunctionInformation functionInformation = CreateRpcMetadataFromFile(powerShellFile.FullName);
+                    AddFunctionIfNameUnique(functionInformation, fileFunctions);
                 }
             }
             else if (powerShellFile.Extension == ".psm1")
             {
-                var potentialFunctions = fileAst.FindAll(x => x is FunctionDefinitionAst, false);
-                foreach (var potentialFunction in potentialFunctions)
+                // parse all function definitions, return as many RpcFunctionMetadatas as exist in the file
+                IEnumerable<Ast>? potentialFunctions = fileAst.FindAll(x => x is FunctionDefinitionAst, false);
+                foreach (Ast potentialFunction in potentialFunctions)
                 {
-                    var matchingBlocks = potentialFunction.FindAll(x => x is ParamBlockAst && ((ParamBlockAst)x).Attributes.Where(z => z.TypeName.ToString() == "Function").Any(), true);
+                    IEnumerable<Ast>? matchingBlocks = potentialFunction.FindAll(x => x is ParamBlockAst && ((ParamBlockAst)x).Attributes.Where(z => z.TypeName.ToString() == "Function").Any(), true);
                     if (matchingBlocks.Any()) {
                         //This function is one we need to register
-                        fileFunctions.Add(CreateRpcMetadataFromFunctionAst(powerShellFile.FullName, (FunctionDefinitionAst)potentialFunction));
+                        FunctionInformation functionInformation = CreateRpcMetadataFromFunctionAst(powerShellFile.FullName, (FunctionDefinitionAst)potentialFunction);
+                        AddFunctionIfNameUnique(functionInformation, fileFunctions);
                     }
                 }
-                // parse all function definitions, return as many RpcFunctionMetadatas as exist in the file
             }
             return fileFunctions;
         }
 
+        private static void AddFunctionIfNameUnique(FunctionInformation functionInformation, List<FunctionInformation> fileFunctions)
+        {
+            if (!fileFunctions.Select(x => x.Name).Contains(functionInformation.Name))
+            {
+                fileFunctions.Add(functionInformation);
+            }
+            else
+            {
+                throw new Exception($"Multiple functions declared with name: {functionInformation.Name}");
+            }
+        }
+
         private static FunctionInformation CreateRpcMetadataFromFile(string powerShellFile)
         {
-            var fileAst = Parser.ParseFile(powerShellFile, out _, out ParseError[] errors);
+            ScriptBlockAst? fileAst = Parser.ParseFile(powerShellFile, out _, out ParseError[] errors);
 
             FunctionInformation thisFunction = new FunctionInformation();
 
@@ -96,6 +110,27 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             return thisFunction;
         }
 
+        private static void ExtractBindings(FunctionInformation thisFunction, ParamBlockAst paramBlock)
+        {
+            if (paramBlock == null)
+            {
+                return;
+            }
+
+            IEnumerable<AttributeAst>? functionAttribute = paramBlock.Attributes.Where(x => x.TypeName.Name == "Function" && x.PositionalArguments.Count > 0);
+            if (functionAttribute.Any() && functionAttribute.First().PositionalArguments[0].GetType() == typeof(StringConstantExpressionAst))
+            {
+                thisFunction.Name = ((StringConstantExpressionAst)functionAttribute.First().PositionalArguments[0]).Value;
+            }
+
+            List<BindingInformation> inputBindings = GetInputBindingInfo(paramBlock);
+            List<BindingInformation> outputBindings = GetOutputBindingInfo(paramBlock.Attributes);
+            List<BindingInformation> missingBindings = BindingExtractor.GetDefaultBindings(inputBindings, outputBindings);
+
+            thisFunction.Bindings.AddRange(inputBindings);
+            thisFunction.Bindings.AddRange(outputBindings);
+            thisFunction.Bindings.AddRange(missingBindings);
+        }
         private static List<BindingInformation> GetInputBindingInfo(ParamBlockAst paramBlock)
         {
             List<BindingInformation> outputBindingInfo = new List<BindingInformation>();
@@ -127,30 +162,8 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             return outputBindingInfo;
         }
 
-        private static void ExtractBindings(FunctionInformation thisFunction, ParamBlockAst paramBlock)
-        {
-            if (paramBlock == null)
-            {
-                return;
-            }
-
-            var functionAttribute = paramBlock.Attributes.Where(x => x.TypeName.Name == "Function" && x.PositionalArguments.Count > 0);
-            if (functionAttribute.Any() && functionAttribute.First().PositionalArguments[0].GetType() == typeof(StringConstantExpressionAst))
-            {
-                thisFunction.Name = ((StringConstantExpressionAst)functionAttribute.First().PositionalArguments[0]).Value;
-            }
-
-            //Input bindings first
-            //thisFunction.Bindings.AddRange(GetInputBindingInfo(paramBlock));
-            List<BindingInformation> inputBindings = GetInputBindingInfo(paramBlock);
-
-            // Then parse output bindings
-            List<BindingInformation> outputBindings = GetOutputBindingInfo(paramBlock.Attributes);
-            List<BindingInformation> missingBindings = BindingExtractor.GetDefaultBindings(inputBindings, outputBindings);
-            thisFunction.Bindings.AddRange(inputBindings);
-            thisFunction.Bindings.AddRange(outputBindings);
-            thisFunction.Bindings.AddRange(missingBindings);
-        }
+        // Everything below this point are static methods that may be used by classes implementing IBinding to extract information from 
+        //   the AST. Perhaps there is a better place for these to live?
 
         public static string? GetPositionalArgumentStringValue(AttributeAst attribute, int attributeIndex, string? defaultValue=null)
         {
@@ -168,7 +181,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             else if (expressionAst.GetType() == typeof(ArrayExpressionAst))
             {
                 List<string> values = new List<string>();
-                var arrayValues = ((ArrayExpressionAst)expressionAst).FindAll(x => x is StringConstantExpressionAst, false);
+                IEnumerable<Ast>? arrayValues = ((ArrayExpressionAst)expressionAst).FindAll(x => x is StringConstantExpressionAst, false);
                 foreach (StringConstantExpressionAst one in arrayValues)
                 {
                     values.Add(one.Value);
