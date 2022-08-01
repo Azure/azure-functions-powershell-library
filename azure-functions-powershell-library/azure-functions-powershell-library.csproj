@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="test\E2E\apps\empty-app\" />
+  </ItemGroup>
+
 </Project>

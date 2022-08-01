@@ -22,8 +22,15 @@ namespace Microsoft.Azure.Functions.PowerShell
 
         protected override void ProcessRecord()
         {
-            List<FunctionInformation> bindingInformations = WorkerIndexingHelper.IndexFunctions(FunctionsAppDir);
-            outputJson = System.Text.Json.JsonSerializer.Serialize(bindingInformations);
+            try
+            {
+                List<FunctionInformation> bindingInformations = WorkerIndexingHelper.IndexFunctions(FunctionsAppDir);
+                outputJson = System.Text.Json.JsonSerializer.Serialize(bindingInformations);
+            }
+            catch (Exception ex) 
+            {
+                ThrowTerminatingError(new ErrorRecord(ex, "Failed to index the function app", ErrorCategory.ParserError, null));
+            }
         }
 
         protected override void EndProcessing()

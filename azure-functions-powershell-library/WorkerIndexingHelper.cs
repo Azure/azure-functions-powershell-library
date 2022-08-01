@@ -17,6 +17,11 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             {
                 throw new FileNotFoundException();
             }
+            if (ContainsLegacyFunctions(Directory.CreateDirectory(baseDir)))
+            {
+                throw new Exception("This function app directory contains functions which rely on host indexing, " +
+                    "please remove them or configure this app for host indexing");
+            }
             List<FileInfo> powerShellFiles = GetPowerShellFiles(Directory.CreateDirectory(baseDir));
             List<FunctionInformation> rpcFunctionMetadatas = new List<FunctionInformation>();
 
@@ -206,5 +211,20 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             }
             return files;
         }
+
+        private static bool ContainsLegacyFunctions(DirectoryInfo baseDir)
+        {
+            List<DirectoryInfo> folders = baseDir.GetDirectories().ToList();
+            foreach (DirectoryInfo folder in folders)
+            {
+                var functionJsonFiles = folder.GetFiles("function.json", SearchOption.TopDirectoryOnly);
+                if (functionJsonFiles.Count() > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }

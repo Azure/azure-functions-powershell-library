@@ -1,8 +1,33 @@
 ﻿using module AzureFunctions.PowerShell.SDK
 
+Describe 'Empty App' {
+    BeforeAll {
+        $metadata = Get-FunctionsMetadata ((Get-Location).Path + "\apps\empty-app")
+        $metadataObject = $metadata | ConvertFrom-Json
 
-Describe 'SinglePs1FunctionApp' {
-        BeforeAll {
+        Import-Module ".\helpers.psm1" -force
+    }
+    It 'Should return 0 functions' {
+        $metadataObject.Count | Should -Be 0
+    }
+}
+
+Describe 'Poorly formatted .ps1 file' {
+    It 'Should throw an error with the file name' {
+        { Get-FunctionsMetadata ((Get-Location).Path + "\apps\poorly-formatted") } 
+            | Should -Throw '*apps\poorly-formatted\function.ps1*'
+    }
+}
+
+Describe 'Hybrid or legacy app' {
+    It 'Should throw an error when legacy functions are present' {
+        { Get-FunctionsMetadata ((Get-Location).Path + "\apps\hybrid-model") } 
+            | Should -Throw
+    }
+}
+
+Describe 'Single Ps1 Function App' {
+    BeforeAll {
         $metadata = Get-FunctionsMetadata ((Get-Location).Path + "\apps\single-ps1app")
         $metadataObject = $metadata | ConvertFrom-Json
 
@@ -24,8 +49,8 @@ Describe 'SinglePs1FunctionApp' {
     }
 }
 
-Describe 'SinglePsm1FunctionApp' {
-        BeforeAll {
+Describe 'Single Psm1 Function App' {
+    BeforeAll {
         $metadata = Get-FunctionsMetadata ((Get-Location).Path + "\apps\single-psm1app")
         $metadataObject = $metadata | ConvertFrom-Json
 
@@ -47,7 +72,7 @@ Describe 'SinglePsm1FunctionApp' {
     }
 }
 
-Describe 'Simple-DurableApp' {
+Describe 'Simple Durable App' {
     BeforeAll {
         $metadata = Get-FunctionsMetadata ((Get-Location).Path + "\apps\simple-durable")
         $metadataObject = $metadata | ConvertFrom-Json
