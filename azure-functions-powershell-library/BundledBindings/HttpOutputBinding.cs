@@ -4,6 +4,7 @@
 //
 
 using AzureFunctions.PowerShell.SDK.Common;
+using Common;
 using System.Management.Automation.Language;
 
 namespace AzureFunctions.PowerShell.SDK.BundledBindings

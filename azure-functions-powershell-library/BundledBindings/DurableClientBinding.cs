@@ -4,6 +4,7 @@
 //
 
 using AzureFunctions.PowerShell.SDK.Common;
+using Common;
 using Microsoft.Azure.Functions.PowerShellWorker;
 using System.Management.Automation.Language;
 

@@ -5,6 +5,7 @@
 
 using AzureFunctions.PowerShell.SDK;
 using AzureFunctions.PowerShell.SDK.Common;
+using Common;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Language;
 
