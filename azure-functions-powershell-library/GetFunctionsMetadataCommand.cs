@@ -16,7 +16,7 @@ namespace Microsoft.Azure.Functions.PowerShell
         /// The path of the Azure Functions directory
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
-        public string? FunctionsAppDir { get; set; }
+        public string? FunctionsAppDirectory { get; set; }
 
         private string outputJson { get; set; } = "";
 
@@ -24,9 +24,9 @@ namespace Microsoft.Azure.Functions.PowerShell
         {
             try
             {
-                if (FunctionsAppDir != null && !string.IsNullOrEmpty(FunctionsAppDir) && Directory.Exists(FunctionsAppDir))
+                if (FunctionsAppDirectory != null && !string.IsNullOrEmpty(FunctionsAppDirectory) && Directory.Exists(FunctionsAppDirectory))
                 {
-                    List<FunctionInformation> bindingInformations = WorkerIndexingHelper.IndexFunctions(FunctionsAppDir);
+                    List<FunctionInformation> bindingInformations = WorkerIndexingHelper.IndexFunctions(FunctionsAppDirectory);
                     outputJson = System.Text.Json.JsonSerializer.Serialize(bindingInformations);
                 }
                 else
