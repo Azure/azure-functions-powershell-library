@@ -1,4 +1,9 @@
-﻿using module AzureFunctions.PowerShell.SDK
+﻿#	
+# Copyright (c) Microsoft. All rights reserved.	
+# Licensed under the MIT license. See LICENSE file in the project root for full license information.	
+#
+
+using module AzureFunctions.PowerShell.SDK
 
 Describe 'Empty App' {
     BeforeAll {
@@ -37,7 +42,7 @@ Describe 'Single Ps1 Function App' {
         $metadataObject.Count | Should -Be 1
     }
 
-    It 'Functions name should be correct' {
+    It 'Function names should contain TestTrigger' {
         Get-FunctionNames $metadataObject | Should -Contain "TestTrigger"
     }
 
@@ -60,7 +65,7 @@ Describe 'Single Psm1 Function App' {
         $metadataObject.Count | Should -Be 1
     }
 
-    It 'Functions name should be correct' {
+    It 'Function names should contain TestTrigger' {
         Get-FunctionNames $metadataObject | Should -Contain "TestTrigger"
     }
 
@@ -83,7 +88,7 @@ Describe 'Simple Durable App' {
         $metadataObject.Count | Should -Be 3
     }
 
-    It 'Functions names should be correct' {
+    It 'Function names should be correct' {
         Get-FunctionNames $metadataObject | Should -Contain "Hello1"
         Get-FunctionNames $metadataObject {$_.Name} | Should -Contain "DurableFunctionsHttpStart1"
         Get-FunctionNames $metadataObject {$_.Name} | Should -Contain "DurableFunctionsOrchestrator1"

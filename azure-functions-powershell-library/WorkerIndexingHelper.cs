@@ -66,6 +66,8 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                         FunctionInformation functionInformation = CreateRpcMetadataFromFunctionAst(powerShellFile.FullName, (FunctionDefinitionAst)potentialFunction);
                         AddFunctionIfNameUnique(functionInformation, fileFunctions);
                     }
+                    // If there are no matching blocks, this is a helper function that will live in the file
+                    // but shall not be indexed as an Azure Function
                 }
             }
             return fileFunctions;

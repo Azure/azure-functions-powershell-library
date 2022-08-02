@@ -4,10 +4,9 @@
 #
 
 class Function : Attribute {
-    [string]$name
+    [string]$Name
 
-    Function() {
-    }
+    Function() { }
 
     Function([string]$Name) {
         $this.Name = $Name
@@ -19,8 +18,7 @@ class HttpTrigger : Attribute {
     [string[]]$Methods
     [string]$Route
 
-    HttpTrigger() {
-    }
+    HttpTrigger() { }
 
     HttpTrigger([string]$AuthLevel) {
         $this.AuthLevel = $AuthLevel
@@ -39,65 +37,57 @@ class HttpTrigger : Attribute {
 }
 
 class TimerTrigger : Attribute { 
-    [string]$chron
+    [string]$Chron
 
-    TimerTrigger() {
-    }
+    TimerTrigger() { }
 
-    TimerTrigger([string]$chron=$null) {
-        $this.chron = $chron
+    TimerTrigger([string]$Chron=$null) {
+        $this.Chron = $Chron
     }
 }
 
 class EventGridTrigger : Attribute { 
-    EventGridTrigger() {
-    }
+    EventGridTrigger() { }
 }
 
 class DurableClient : Attribute {
-    [string]$name
+    [string]$Name
 
-    DurableClient([string]$name) {
-        $this.name = $name
+    DurableClient([string]$Name) {
+        $this.Name = $Name
     }
 
-    DurableClient() {
-
-    }
+    DurableClient() { }
 }
 
 class OrchestrationTrigger : Attribute {
-    OrchestrationTrigger() {
-
-    }
+    OrchestrationTrigger() { }
 }
 
 class ActivityTrigger : Attribute {
-    ActivityTrigger() {
-
-    }
+    ActivityTrigger() { }
 }
 
 class EventHubTrigger : Attribute {
-    [string]$eventHubName
-    [string]$consumerGroup
-    [string]$cardinality
-    [string]$connection
-    EventHubTrigger([string]$eventHubName, [string]$consumerGroup, [string]$cardinality, [string]$connection) {
-        $this.eventHubName = $eventHubName
-        $this.consumerGroup = $consumerGroup
-        $this.cardinality = $cardinality
-        $this.connection = $connection
+    [string]$EventHubName
+    [string]$ConsumerGroup
+    [string]$Cardinality
+    [string]$Connection
+    EventHubTrigger([string]$EventHubName, [string]$ConsumerGroup, [string]$Cardinality, [string]$Connection) {
+        $this.EventHubName = $EventHubName
+        $this.ConsumerGroup = $ConsumerGroup
+        $this.Cardinality = $Cardinality
+        $this.Connection = $Connection
     }
 }
 
 class EventHubOutput : Attribute {
-    [string]$name
-    [string]$eventHubName
-    [string]$connection
-    EventGridTrigger([string]$name, [string]$eventHubName, [string]$connection) {
-        $this.name = $name
-        $this.eventHubName = $eventHubName
-        $this.connection = $connection
+    [string]$Name
+    [string]$EventHubName
+    [string]$Connection
+    EventGridTrigger([string]$Name, [string]$EventHubName, [string]$Connection) {
+        $this.Name = $Name
+        $this.EventHubName = $EventHubName
+        $this.Connection = $Connection
     }
 }
