@@ -7,10 +7,10 @@ using module AzureFunctions.PowerShell.SDK
 
 Describe 'Empty App' {
     BeforeAll {
-        $metadata = Get-FunctionsMetadata ((Get-Location).Path + "\apps\empty-app")
+        $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/empty-app")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module ".\helpers.psm1" -force
+        Import-Module "./helpers.psm1" -force
     }
     It 'Should return 0 functions' {
         $metadataObject.Count | Should -Be 0
@@ -19,24 +19,24 @@ Describe 'Empty App' {
 
 Describe 'Poorly formatted .ps1 file' {
     It 'Should throw an error with the file name' {
-        { Get-FunctionsMetadata ((Get-Location).Path + "\apps\poorly-formatted") } 
-            | Should -Throw '*apps\poorly-formatted\function.ps1*'
+        { Get-FunctionsMetadata ("$PSScriptRoot/apps/poorly-formatted") } 
+            | Should -Throw '*function.ps1*'
     }
 }
 
 Describe 'Hybrid or legacy app' {
     It 'Should throw an error when legacy functions are present' {
-        { Get-FunctionsMetadata ((Get-Location).Path + "\apps\hybrid-model") } 
+        { Get-FunctionsMetadata ("$PSScriptRoot/apps/hybrid-model") } 
             | Should -Throw
     }
 }
 
 Describe 'Single Ps1 Function App' {
     BeforeAll {
-        $metadata = Get-FunctionsMetadata ((Get-Location).Path + "\apps\single-ps1app")
+        $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/single-ps1app")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module ".\helpers.psm1" -force
+        Import-Module "./helpers.psm1" -force
     }
     It 'Should return 1 function' {
         $metadataObject.Count | Should -Be 1
@@ -46,7 +46,7 @@ Describe 'Single Ps1 Function App' {
         Get-FunctionNames $metadataObject | Should -Contain "TestTrigger"
     }
 
-    It 'Function Bindings should be correct' {
+    It 'Function Bindings should be httpTrigger and http' {
         Get-BindingCount $metadataObject 'TestTrigger' | Should -Be 2
 
         Get-Binding $metadataObject 'TestTrigger' 'httpTrigger' | Should -Not -Be $null
@@ -56,10 +56,10 @@ Describe 'Single Ps1 Function App' {
 
 Describe 'Single Psm1 Function App' {
     BeforeAll {
-        $metadata = Get-FunctionsMetadata ((Get-Location).Path + "\apps\single-psm1app")
+        $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/single-psm1app")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module ".\helpers.psm1" -force
+        Import-Module "./helpers.psm1" -force
     }
     It 'Should return 1 function' {
         $metadataObject.Count | Should -Be 1
@@ -69,7 +69,7 @@ Describe 'Single Psm1 Function App' {
         Get-FunctionNames $metadataObject | Should -Contain "TestTrigger"
     }
 
-    It 'Function Bindings should be correct' {
+    It 'Function Bindings should be httpTrigger and http' {
         Get-BindingCount $metadataObject 'TestTrigger' | Should -Be 2
 
         Get-Binding $metadataObject 'TestTrigger' 'httpTrigger' | Should -Not -Be $null
@@ -79,31 +79,33 @@ Describe 'Single Psm1 Function App' {
 
 Describe 'Simple Durable App' {
     BeforeAll {
-        $metadata = Get-FunctionsMetadata ((Get-Location).Path + "\apps\simple-durable")
+        $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/simple-durable")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module ".\helpers.psm1" -force
+        Import-Module "./helpers.psm1" -force
     }
     It 'Should return 3 functions' {
         $metadataObject.Count | Should -Be 3
     }
 
-    It 'Function names should be correct' {
-        Get-FunctionNames $metadataObject | Should -Contain "Hello1"
-        Get-FunctionNames $metadataObject {$_.Name} | Should -Contain "DurableFunctionsHttpStart1"
-        Get-FunctionNames $metadataObject {$_.Name} | Should -Contain "DurableFunctionsOrchestrator1"
+    $expectedFunctionNames = @( @{FunctionName = 'Hello1'; NumBindings = 1}, 
+                                @{FunctionName = 'DurableFunctionsHttpStart1'; NumBindings = 3}, 
+                                @{FunctionName = 'DurableFunctionsOrchestrator1'; NumBindings = 1})
+
+    It "Function names should contain <functionName>" -ForEach $expectedFunctionNames {
+        Get-FunctionNames $metadataObject | Should -Contain $functionName
+    }
+    It 'Function called <functionName> should have <numBindings> bindings' -ForEach $expectedFunctionNames {
+        Get-BindingCount $metadataObject $functionName | Should -Be $numBindings
     }
 
-    It 'Function Bindings should be correct' {
-        Get-BindingCount $metadataObject 'Hello1' | Should -Be 1
-        Get-BindingCount $metadataObject 'DurableFunctionsHttpStart1' | Should -Be 3
-        Get-BindingCount $metadataObject 'DurableFunctionsOrchestrator1' | Should -Be 1
+    $expectedBindingNames = @( @{FunctionName = 'Hello1'; BindingName = 'activityTrigger'},
+                               @{FunctionName = 'DurableFunctionsHttpStart1'; BindingName = 'httpTrigger'},
+                               @{FunctionName = 'DurableFunctionsHttpStart1'; BindingName = 'http'},
+                               @{FunctionName = 'DurableFunctionsHttpStart1'; BindingName = 'durableClient'},
+                               @{FunctionName = 'DurableFunctionsOrchestrator1'; BindingName = 'orchestrationTrigger'})
 
-        Get-Binding $metadataObject 'Hello1' 'activityTrigger' | Should -Not -Be $null
-        Get-Binding $metadataObject 'DurableFunctionsHttpStart1' 'httpTrigger' | Should -Not -Be $null
-        Get-Binding $metadataObject 'DurableFunctionsHttpStart1' 'http' | Should -Not -Be $null
-        Get-Binding $metadataObject 'DurableFunctionsHttpStart1' 'durableClient' | Should -Not -Be $null
-
-        Get-Binding $metadataObject 'DurableFunctionsOrchestrator1' 'orchestrationTrigger' | Should -Not -Be $null
+    It 'Function <functionName> should have binding <bindingName>' -ForEach $expectedBindingNames {
+        Get-Binding $metadataObject $functionName $bindingName | Should -Not -Be $null
     }
 }

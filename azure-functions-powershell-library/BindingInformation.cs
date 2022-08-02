@@ -15,8 +15,8 @@ namespace AzureFunctions.PowerShell.SDK
         }
 
         public int Direction { get; set; } = -1;
-        public string Type { get; set; } = "";
-        public string Name { get; set; } = "";
+        public string Type { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public Dictionary<string, Object> otherInformation { get; set; } = new Dictionary<string, Object>();
     }
 }

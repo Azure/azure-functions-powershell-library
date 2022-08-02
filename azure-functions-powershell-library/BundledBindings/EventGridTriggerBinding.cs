@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 //
 
+using AzureFunctions.PowerShell.SDK.Common;
 using Microsoft.Azure.Functions.PowerShellWorker;
 using System.Management.Automation.Language;
 
@@ -10,9 +11,9 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
 {
     public class EventGridTriggerBinding : IInputBinding
     {
-        public override string BindingAttributeName => "EventGridTrigger";
+        public override string BindingAttributeName => Constants.AttributeNames.EventGridTrigger;
 
-        public override string BindingType => "eventGridTrigger";
+        public override string BindingType => Constants.BindingNames.EventGridTrigger;
 
         public override BindingInformation ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {

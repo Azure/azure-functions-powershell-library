@@ -4,6 +4,7 @@
 //
 
 using AzureFunctions.PowerShell.SDK;
+using AzureFunctions.PowerShell.SDK.Common;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Language;
 
@@ -15,14 +16,14 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
         {
             if (!Directory.Exists(baseDir))
             {
-                throw new FileNotFoundException();
+                throw new DirectoryNotFoundException();
             }
             if (ContainsLegacyFunctions(Directory.CreateDirectory(baseDir)))
             {
                 throw new Exception("This function app directory contains functions which rely on host indexing, " +
                     "please remove them or configure this app for host indexing");
             }
-            List<FileInfo> powerShellFiles = GetPowerShellFiles(Directory.CreateDirectory(baseDir));
+            List<FileInfo> powerShellFiles = GetPowerShellFiles(new DirectoryInfo(baseDir));
             List<FunctionInformation> rpcFunctionMetadatas = new List<FunctionInformation>();
 
             foreach (FileInfo powerShellFile in powerShellFiles)
@@ -41,26 +42,26 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             {
                 throw new Exception($"Couldn't parse the file: {powerShellFile.FullName}");
                 // TODO: Probably don't throw here?
-                //return fileFunctions;
             }
-            if (powerShellFile.Extension == ".ps1") 
+            if (string.Equals(powerShellFile.Extension, Constants.Ps1FileExtension, StringComparison.OrdinalIgnoreCase)) 
             {
                 // parse only the file param block, return one RpcFunctionMetadata assuming the file is the entry point
                 ParamBlockAst paramAsts = fileAst.ParamBlock;
-                if (paramAsts != null && paramAsts.Attributes.Where(x => x.TypeName.ToString() == "Function").Any())
+                if (paramAsts != null && paramAsts.Attributes.Where(x => x.TypeName.ToString() == Constants.AttributeNames.Function).Any())
                 {
                     // This is a function, return it 
                     FunctionInformation functionInformation = CreateRpcMetadataFromFile(powerShellFile.FullName);
                     AddFunctionIfNameUnique(functionInformation, fileFunctions);
                 }
             }
-            else if (powerShellFile.Extension == ".psm1")
+            else if (string.Equals(powerShellFile.Extension, Constants.Psm1FileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 // parse all function definitions, return as many RpcFunctionMetadatas as exist in the file
                 IEnumerable<Ast>? potentialFunctions = fileAst.FindAll(x => x is FunctionDefinitionAst, false);
                 foreach (Ast potentialFunction in potentialFunctions)
                 {
-                    IEnumerable<Ast>? matchingBlocks = potentialFunction.FindAll(x => x is ParamBlockAst && ((ParamBlockAst)x).Attributes.Where(z => z.TypeName.ToString() == "Function").Any(), true);
+                    IEnumerable<Ast>? matchingBlocks = potentialFunction.FindAll(x => x is ParamBlockAst && 
+                    ((ParamBlockAst)x).Attributes.Where(z => z.TypeName.ToString() == Constants.AttributeNames.Function).Any(), true);
                     if (matchingBlocks.Any()) {
                         //This function is one we need to register
                         FunctionInformation functionInformation = CreateRpcMetadataFromFunctionAst(powerShellFile.FullName, (FunctionDefinitionAst)potentialFunction);
@@ -124,7 +125,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                 return;
             }
 
-            IEnumerable<AttributeAst>? functionAttribute = paramBlock.Attributes.Where(x => x.TypeName.Name == "Function" && x.PositionalArguments.Count > 0);
+            IEnumerable<AttributeAst>? functionAttribute = paramBlock.Attributes.Where(x => x.TypeName.Name == Constants.AttributeNames.Function && x.PositionalArguments.Count > 0);
             if (functionAttribute.Any() && functionAttribute.First().PositionalArguments[0].GetType() == typeof(StringConstantExpressionAst))
             {
                 thisFunction.Name = ((StringConstantExpressionAst)functionAttribute.First().PositionalArguments[0]).Value;
@@ -138,6 +139,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             thisFunction.Bindings.AddRange(outputBindings);
             thisFunction.Bindings.AddRange(missingBindings);
         }
+
         private static List<BindingInformation> GetInputBindingInfo(ParamBlockAst paramBlock)
         {
             List<BindingInformation> outputBindingInfo = new List<BindingInformation>();
@@ -179,6 +181,14 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                 ? ((StringConstantExpressionAst)attribute.PositionalArguments[attributeIndex]).Value : defaultValue;
         }
 
+        /// <summary>
+        /// This method takes an ExpressionAst which is the value passed into a parameter, and attempts to parse it to a List<string>.
+        /// If the user passes a single string to the parameter, it returns a list with only that string
+        /// If the user passes a PowerShell array expression, it returns a list will all of the elements of the array as strings
+        /// eg. ('Get', 'Post') ~= new List<string>() { "Get", "Post" }
+        /// </summary>
+        /// <param name="expressionAst"></param>
+        /// <returns>List of values represented in the ExpressionAst</returns>
         public static List<string>? ExtractOneOrMore(ExpressionAst expressionAst)
         {
             if (expressionAst.GetType() == typeof(StringConstantExpressionAst)) 
@@ -200,14 +210,12 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
 
         private static List<FileInfo> GetPowerShellFiles(DirectoryInfo baseDir, int depth=0)
         {
-            List<FileInfo> files = baseDir.GetFiles("*.ps1", SearchOption.TopDirectoryOnly).ToList();
-            files.AddRange(baseDir.GetFiles("*.psm1", SearchOption.TopDirectoryOnly).ToList());
+            List<FileInfo> files = baseDir.GetFiles("*" + Constants.Ps1FileExtension, SearchOption.TopDirectoryOnly).ToList();
+            files.AddRange(baseDir.GetFiles("*" + Constants.Psm1FileExtension, SearchOption.TopDirectoryOnly).ToList());
             if (depth > 0)
             {
                 foreach (DirectoryInfo d in baseDir.GetDirectories())
                 {
-                    //folders.Add(d);
-                    // if (MasterFolderCounter > maxFolders) 
                     files.AddRange(GetPowerShellFiles(d, depth - 1));
                 }
             }
@@ -219,7 +227,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             List<DirectoryInfo> folders = baseDir.GetDirectories().ToList();
             foreach (DirectoryInfo folder in folders)
             {
-                var functionJsonFiles = folder.GetFiles("function.json", SearchOption.TopDirectoryOnly);
+                var functionJsonFiles = folder.GetFiles(Constants.FunctionJson, SearchOption.TopDirectoryOnly);
                 if (functionJsonFiles.Count() > 0)
                 {
                     return true;

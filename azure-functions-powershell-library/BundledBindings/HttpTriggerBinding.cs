@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 //
 
+using AzureFunctions.PowerShell.SDK.Common;
 using Microsoft.Azure.Functions.PowerShellWorker;
 using System.Management.Automation.Language;
 
@@ -15,42 +16,47 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
             defaultOutputBindings.Add(HttpOutputBinding.Create());
         }
 
-        public override string BindingAttributeName => "HttpTrigger";
+        public override string BindingAttributeName => Constants.AttributeNames.HttpTrigger;
 
-        public override string BindingType => "httpTrigger";
+        public override string BindingType => Constants.BindingNames.HttpTrigger;
 
         public override BindingInformation ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {
-            BindingInformation bindingInformation = new BindingInformation();
-
-            bindingInformation.Name = parameter.Name.VariablePath.UserPath;
-            //Todo: Named arguments?
-            string? bindingAuthLevel = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0, "anonymous");
+            BindingInformation bindingInformation = new BindingInformation
+            {
+                Name = parameter.Name.VariablePath.UserPath
+            };
+            //Todo: Support for named arguments: https://github.com/Azure/azure-functions-powershell-library/issues/11
+            string? bindingAuthLevel = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0, Constants.DefaultHttpAuthLevel);
             List<string>? bindingMethods = attribute.PositionalArguments.Count > 1 ? 
                                                 WorkerIndexingHelper.ExtractOneOrMore(attribute.PositionalArguments[1]) : 
-                                                new List<string>() { "GET", "POST" };
+                                                Constants.DefaultHttpMethods;
             string? route = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 2);
             if (bindingMethods == null)
             {
-                bindingMethods = new List<string>() { "GET", "POST" };
+                bindingMethods = Constants.DefaultHttpMethods;
             }
             bindingInformation.Direction = (int)BindingDirection;
             bindingInformation.Type = BindingType;
             if (bindingAuthLevel != null)
             {
-                bindingInformation.otherInformation.Add("authLevel", bindingAuthLevel);
+                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.AuthLevel, bindingAuthLevel);
             }
-            bindingInformation.otherInformation.Add("methods", bindingMethods);
+            if (bindingMethods != null)
+            {
+                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Methods, bindingMethods);
+            }
             if (route != null)
             {
-                bindingInformation.otherInformation.Add("route", route);
+                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Route, route);
             }
             return bindingInformation;
         }
         
         public override bool ShouldUseDefaultOutputBindings(List<BindingInformation> existingOutputBindings)
         {
-            var httpOutputBindings = existingOutputBindings.Where(x => x.Type == "http" && x.Direction == (int)BindingInformation.Directions.Out);
+            var httpOutputBindings = existingOutputBindings.Where(x => x.Type == Constants.BindingNames.Http && 
+                                                                       x.Direction == (int)BindingInformation.Directions.Out);
             return !httpOutputBindings.Any();
         }
     }

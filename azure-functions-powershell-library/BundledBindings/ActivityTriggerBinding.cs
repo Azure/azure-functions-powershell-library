@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 //
 
+using AzureFunctions.PowerShell.SDK.Common;
 using Microsoft.Azure.Functions.PowerShellWorker;
 using System.Management.Automation.Language;
 
@@ -10,9 +11,9 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
 {
     public class ActivityTriggerBinding : IInputBinding
     {
-        public override string BindingAttributeName => "ActivityTrigger";
+        public override string BindingAttributeName => Constants.AttributeNames.ActivityTrigger;
 
-        public override string BindingType => "activityTrigger";
+        public override string BindingType => Constants.BindingNames.ActivityTrigger;
 
         public override BindingInformation ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {

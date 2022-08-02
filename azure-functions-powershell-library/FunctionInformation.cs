@@ -7,11 +7,11 @@ namespace AzureFunctions.PowerShell.SDK
 {
     public class FunctionInformation
     {
-        public string Directory { get; set; } = "";
-        public string ScriptFile { get; set; } = "";
-        public string Name { get; set; } = "";
-        public string EntryPoint { get; set; } = "";
-        public string FunctionId { get; set; } = "";
+        public string Directory { get; set; } = string.Empty;
+        public string ScriptFile { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string EntryPoint { get; set; } = string.Empty;
+        public string FunctionId { get; set; } = string.Empty;
         public List<BindingInformation> Bindings { get; set; } = new List<BindingInformation>();
     }
 }

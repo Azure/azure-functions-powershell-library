@@ -18,7 +18,7 @@ namespace Microsoft.Azure.Functions.PowerShell
         [Parameter(Mandatory = true, Position = 0)]
         public string? FunctionsAppDirectory { get; set; }
 
-        private string outputJson { get; set; } = "";
+        private string outputJson { get; set; } = string.Empty;
 
         protected override void ProcessRecord()
         {

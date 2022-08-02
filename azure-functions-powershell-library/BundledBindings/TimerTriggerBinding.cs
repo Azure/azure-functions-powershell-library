@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 //
 
+using AzureFunctions.PowerShell.SDK.Common;
 using Microsoft.Azure.Functions.PowerShellWorker;
 using System.Management.Automation.Language;
 
@@ -10,9 +11,9 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
 {
     public class TimerTriggerBinding : IInputBinding
     {
-        public override string BindingAttributeName => "TimerTrigger";
+        public override string BindingAttributeName => Constants.AttributeNames.TimerTrigger;
 
-        public override string BindingType => "timerTrigger";
+        public override string BindingType => Constants.BindingNames.TimerTrigger;
 
         public override BindingInformation ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {
@@ -23,7 +24,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
             bindingInformation.Type = BindingType;
             if (chronExpression != null)
             {
-                bindingInformation.otherInformation.Add("schedule", chronExpression);
+                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Schedule, chronExpression);
             }
             return bindingInformation;
         }

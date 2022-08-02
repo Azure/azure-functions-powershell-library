@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 //
 
+using AzureFunctions.PowerShell.SDK.Common;
 using Microsoft.Azure.Functions.PowerShellWorker;
 using System.Management.Automation.Language;
 
@@ -10,9 +11,9 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
 {
     public class EventHubTriggerBinding : IInputBinding
     {
-        public override string BindingAttributeName => "EventHubTrigger";
+        public override string BindingAttributeName => Constants.AttributeNames.EventHubTrigger;
 
-        public override string BindingType => "eventHubTrigger";
+        public override string BindingType => Constants.BindingNames.EventHubTrigger;
 
         public override BindingInformation ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {
@@ -26,10 +27,10 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
             string? connection = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 3);
             if (eventHubName is not null && consumerGroup is not null && cardinality is not null && connection is not null)
             {
-                bindingInformation.otherInformation.Add("eventHubName", eventHubName);
-                bindingInformation.otherInformation.Add("consumerGroup", consumerGroup);
-                bindingInformation.otherInformation.Add("cardinality", cardinality);
-                bindingInformation.otherInformation.Add("connection", connection);
+                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.EventHubName, eventHubName);
+                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.ConsumerGroup, consumerGroup);
+                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Cardinality, cardinality);
+                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Connection, connection);
                 return bindingInformation;
             }
             else
