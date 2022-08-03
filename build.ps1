@@ -102,6 +102,10 @@ if ($Bootstrap.IsPresent) {
         Write-Log -Warning "Module 'platyPS' is missing. Installing 'platyPS' ..."
         Install-Module -Name platyPS -Scope CurrentUser -Force
     }
+    if (-not (Get-Module -Name Pester -ListAvailable)) {
+        Write-Log -Warning "Module 'Pester' is missing. Installing 'Pester' ..."
+        Install-Module -Name Pester
+    }
 }
 
 # Clean step
@@ -138,8 +142,40 @@ if (!$NoBuild.IsPresent) {
 
 # Test step
 if ($Test.IsPresent) {
-    dotnet test "$PSScriptRoot/test/Unit"
-    if ($LASTEXITCODE -ne 0) { throw "xunit tests failed." }
+    # Dotnet test phase
+    # dotnet test "$PSScriptRoot/test/Unit"
+    # if ($LASTEXITCODE -ne 0) { throw "xunit tests failed." }
+
+    # Pester test phase - step 1: get the newly built module into the PSModulePath
+    # TODO: Need to test conflicts, module with same name existing in another PsModulePath folder
+    $publishDir = "./$RepoName/bin/$Configuration/$TargetFramework/publish/*" 
+    $moduleDir = "./$RepoName/bin/$Configuration/$TargetFramework/$ModuleName" 
+
+    $moduleLocation = "$PSScriptRoot/$RepoName/bin/$Configuration/$TargetFramework" 
+
+    # Copy the module into another folder with the correct name
+    if (!(Test-Path $moduleDir)) {
+        New-Item $moduleDir -ItemType directory
+    }
+
+    Remove-Item -Path $moduleDir/* -Recurse -Force
+    Copy-Item -Path $publishDir -Destination $moduleDir -Recurse -Force
+
+    # Add the folder containing the newly renamed module to the PSModulePath
+    $psMP = $env:PSModulePath -Split ";"
+    if (!($psMP -contains $moduleLocation)) {
+        $psMP += $moduleLocation
+        $psMP = $psMP -Join ";"
+        $env:PSModulePath = $psMP
+    }
+
+    if (-not (Get-Module -Name Pester -ListAvailable)) {
+        throw "Cannot find the 'Pester' module. Please specify '-Bootstrap' to install build dependencies."
+    }
+
+    Import-Module Pester -PassThru
+    Invoke-Pester "./$RepoName/test/E2E/Get-FunctionsMetadata.Tests.ps1"
+    Remove-Module AzureFunctions.PowerShell.SDK
 }
 
 if ($Deploy.IsPresent) {

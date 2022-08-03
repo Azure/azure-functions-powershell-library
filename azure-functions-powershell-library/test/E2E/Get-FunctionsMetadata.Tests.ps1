@@ -10,8 +10,9 @@ Describe 'Empty App' {
         $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/empty-app")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module "./helpers.psm1" -force
+        Import-Module "$PSScriptRoot/helpers.psm1" -force
     }
+
     It 'Should return 0 functions' {
         $metadataObject.Count | Should -Be 0
     }
@@ -36,8 +37,9 @@ Describe 'Single Ps1 Function App' {
         $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/single-ps1app")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module "./helpers.psm1" -force
+        Import-Module "$PSScriptRoot/helpers.psm1" -force
     }
+
     It 'Should return 1 function' {
         $metadataObject.Count | Should -Be 1
     }
@@ -59,8 +61,9 @@ Describe 'Single Psm1 Function App' {
         $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/single-psm1app")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module "./helpers.psm1" -force
+        Import-Module "$PSScriptRoot/helpers.psm1" -force
     }
+
     It 'Should return 1 function' {
         $metadataObject.Count | Should -Be 1
     }
@@ -82,8 +85,9 @@ Describe 'Simple Durable App' {
         $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/simple-durable")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module "./helpers.psm1" -force
+        Import-Module "$PSScriptRoot/helpers.psm1" -force
     }
+
     It 'Should return 3 functions' {
         $metadataObject.Count | Should -Be 3
     }
@@ -95,6 +99,7 @@ Describe 'Simple Durable App' {
     It "Function names should contain <functionName>" -ForEach $expectedFunctionNames {
         Get-FunctionNames $metadataObject | Should -Contain $functionName
     }
+
     It 'Function called <functionName> should have <numBindings> bindings' -ForEach $expectedFunctionNames {
         Get-BindingCount $metadataObject $functionName | Should -Be $numBindings
     }
