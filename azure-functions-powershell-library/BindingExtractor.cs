@@ -18,7 +18,10 @@ namespace AzureFunctions.PowerShell.SDK
             //   IBinding, and load it manually into our supportedBindings
 
             // Find all types that implement IBinding
+            // Apparently, there are scenarios where this throws a ReflectionTypeLoadException - filtering it seems to help
             IEnumerable<Type>? types = AppDomain.CurrentDomain.GetAssemblies()
+                                                              .Where(ass => ass.IsDynamic == false)
+                                                              .Where(x => !(x.FullName ?? "").StartsWith("Microsoft.GeneratedCode"))
                                                               .SelectMany(assembly => assembly.GetTypes())
                                                               .Where(type => type.IsSubclassOf(typeof(IBinding)));
             foreach (Type type in types)
