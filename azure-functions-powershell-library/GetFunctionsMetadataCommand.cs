@@ -24,7 +24,7 @@ namespace Microsoft.Azure.Functions.PowerShell
         {
             try
             {
-                if (FunctionsAppDirectory != null && !string.IsNullOrEmpty(FunctionsAppDirectory) && Directory.Exists(FunctionsAppDirectory))
+                if (!string.IsNullOrEmpty(FunctionsAppDirectory) && Directory.Exists(FunctionsAppDirectory))
                 {
                     List<FunctionInformation> bindingInformations = WorkerIndexingHelper.IndexFunctions(FunctionsAppDirectory);
                     outputJson = System.Text.Json.JsonSerializer.Serialize(bindingInformations);
