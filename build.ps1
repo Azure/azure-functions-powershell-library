@@ -175,7 +175,6 @@ if ($Test.IsPresent) {
 
     Import-Module Pester -PassThru
     Invoke-Pester "./$RepoName/test/E2E/Get-FunctionsMetadata.Tests.ps1"
-    Remove-Module AzureFunctions.PowerShell.SDK
     if ($Error[0].Fullyqualifiederrorid -eq 'PesterAssertionFailed') {throw 'Pester test failed'}        
 }
 
