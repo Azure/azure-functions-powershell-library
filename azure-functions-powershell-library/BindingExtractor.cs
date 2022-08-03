@@ -6,6 +6,7 @@
 using AzureFunctions.PowerShell.SDK.BundledBindings;
 using Common;
 using System.Management.Automation.Language;
+using System.Reflection;
 
 namespace AzureFunctions.PowerShell.SDK
 {
@@ -19,11 +20,19 @@ namespace AzureFunctions.PowerShell.SDK
 
             // Find all types that implement IBinding
             // Apparently, there are scenarios where this throws a ReflectionTypeLoadException - filtering it seems to help
-            IEnumerable<Type>? types = AppDomain.CurrentDomain.GetAssemblies()
-                                                              .Where(ass => ass.IsDynamic == false)
-                                                              .Where(x => !(x.FullName ?? "").StartsWith("Microsoft.GeneratedCode"))
-                                                              .SelectMany(assembly => assembly.GetTypes())
-                                                              .Where(type => type.IsSubclassOf(typeof(IBinding)));
+            IEnumerable<Assembly>? assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            List<Type> types = new List<Type>();
+            foreach (Assembly assembly in assemblies)
+            {
+                try
+                {
+                    types.AddRange(assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(IBinding))));
+                }
+                catch (ReflectionTypeLoadException)
+                {
+                    //Do nothing, this is probably fine (?)
+                }
+            }
             foreach (Type type in types)
             {
                 try
