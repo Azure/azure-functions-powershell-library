@@ -31,7 +31,7 @@ param(
     $BuildNumber = '0'
 )
 
-#Requires -Version 7.0
+#Requires -Version 6.2
 
 $PowerShellVersion = '7.2'
 $TargetFramework = 'net6.0'

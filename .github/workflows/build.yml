@@ -24,4 +24,5 @@ jobs:
         run:
           # PowerShell script to execute in Actions-hydrated context
           ./build.ps1 -Test -Bootstrap
-        shell: powershell
+        # pwsh should be powershell core
+        shell: pwsh
