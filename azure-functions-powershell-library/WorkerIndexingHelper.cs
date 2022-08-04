@@ -228,7 +228,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             List<DirectoryInfo> folders = baseDir.GetDirectories().ToList();
             foreach (DirectoryInfo folder in folders)
             {
-                var functionJsonFiles = folder.GetFiles(Constants.FunctionJson, SearchOption.TopDirectoryOnly);
+                FileInfo[] functionJsonFiles = folder.GetFiles(Constants.FunctionJson, SearchOption.TopDirectoryOnly);
                 if (functionJsonFiles.Count() > 0)
                 {
                     return true;

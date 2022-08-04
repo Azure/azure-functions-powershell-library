@@ -19,7 +19,6 @@ namespace AzureFunctions.PowerShell.SDK
             //   IBinding, and load it manually into our supportedBindings
 
             // Find all types that implement IBinding
-            // Apparently, there are scenarios where this throws a ReflectionTypeLoadException - filtering it seems to help
             IEnumerable<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<Type> types = new List<Type>();
             foreach (Assembly assembly in assemblies)
@@ -30,7 +29,9 @@ namespace AzureFunctions.PowerShell.SDK
                 }
                 catch (ReflectionTypeLoadException)
                 {
-                    //Do nothing, this is probably fine (?)
+                    // Do nothing, ReflectionTypeLoadExceptions seem to be thrown in the virtualized PowerShell environments used 
+                    // by GitHub in the test environment. So far, ignoring them hasn't changed the behavior of the app, they seem
+                    // to be thrown only by assemblies that come packaged with .NET. 
                 }
             }
             foreach (Type type in types)
