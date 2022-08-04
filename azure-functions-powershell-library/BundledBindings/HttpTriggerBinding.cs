@@ -37,7 +37,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
             {
                 bindingMethods = Constants.DefaultHttpMethods;
             }
-            bindingInformation.Direction = (int)BindingDirection;
+            bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;
             if (bindingAuthLevel != null)
             {
@@ -57,7 +57,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
         public override bool ShouldUseDefaultOutputBindings(List<BindingInformation> existingOutputBindings)
         {
             var httpOutputBindings = existingOutputBindings.Where(x => x.Type == Constants.BindingNames.Http && 
-                                                                       x.Direction == (int)BindingInformation.Directions.Out);
+                                                                       x.Direction == BindingInformation.Directions.Out);
             return !httpOutputBindings.Any();
         }
     }

@@ -20,7 +20,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
         {
             BindingInformation bindingInformation = new BindingInformation();
             bindingInformation.Type = BindingType;
-            bindingInformation.Direction = (int)BindingDirection;
+            bindingInformation.Direction = BindingDirection;
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
             string? eventHubName = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0);
             string? consumerGroup = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 1);

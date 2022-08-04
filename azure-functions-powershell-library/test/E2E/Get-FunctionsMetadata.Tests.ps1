@@ -10,7 +10,7 @@ Describe 'Empty App' {
         $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/empty-app")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module "$PSScriptRoot/helpers.psm1" -force
+        Import-Module "$PSScriptRoot/testUtilities.psm1" -force
     }
 
     It 'Should return 0 functions' {
@@ -37,7 +37,7 @@ Describe 'Single Ps1 Function App' {
         $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/single-ps1app")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module "$PSScriptRoot/helpers.psm1" -force
+        Import-Module "$PSScriptRoot/testUtilities.psm1" -force
     }
 
     It 'Should return 1 function' {
@@ -61,7 +61,7 @@ Describe 'Single Psm1 Function App' {
         $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/single-psm1app")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module "$PSScriptRoot/helpers.psm1" -force
+        Import-Module "$PSScriptRoot/testUtilities.psm1" -force
     }
 
     It 'Should return 1 function' {
@@ -85,7 +85,7 @@ Describe 'Simple Durable App' {
         $metadata = Get-FunctionsMetadata ("$PSScriptRoot/apps/simple-durable")
         $metadataObject = $metadata | ConvertFrom-Json
 
-        Import-Module "$PSScriptRoot/helpers.psm1" -force
+        Import-Module "$PSScriptRoot/testUtilities.psm1" -force
     }
 
     It 'Should return 3 functions' {

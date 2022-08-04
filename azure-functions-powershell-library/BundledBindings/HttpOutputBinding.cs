@@ -27,7 +27,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
         {
             BindingInformation defaultOutputInfo = new BindingInformation();
             defaultOutputInfo.Type = Constants.BindingNames.Http;
-            defaultOutputInfo.Direction = (int)BindingInformation.Directions.Out;
+            defaultOutputInfo.Direction = BindingInformation.Directions.Out;
             defaultOutputInfo.Name = name;
             return defaultOutputInfo;
         }

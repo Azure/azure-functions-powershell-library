@@ -157,7 +157,7 @@ internal class {0} {{
 }}
 '@
 
-$individual_resource_string_proprety = @'
+$individual_resource_string_property = @'
 
     /// <summary>
     /// Looks up a localized string similar to 

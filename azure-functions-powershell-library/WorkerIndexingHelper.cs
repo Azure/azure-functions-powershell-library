@@ -58,10 +58,10 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             else if (string.Equals(powerShellFile.Extension, Constants.Psm1FileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 // parse all function definitions, return as many RpcFunctionMetadatas as exist in the file
-                IEnumerable<Ast>? potentialFunctions = fileAst.FindAll(x => x is FunctionDefinitionAst, false);
+                IEnumerable<Ast> potentialFunctions = fileAst.FindAll(x => x is FunctionDefinitionAst, false);
                 foreach (Ast potentialFunction in potentialFunctions)
                 {
-                    IEnumerable<Ast>? matchingBlocks = potentialFunction.FindAll(x => x is ParamBlockAst && 
+                    IEnumerable<Ast> matchingBlocks = potentialFunction.FindAll(x => x is ParamBlockAst && 
                     ((ParamBlockAst)x).Attributes.Where(z => z.TypeName.ToString() == Constants.AttributeNames.Function).Any(), true);
                     if (matchingBlocks.Any()) {
                         //This function is one we need to register

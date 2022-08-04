@@ -20,7 +20,7 @@ namespace AzureFunctions.PowerShell.SDK
 
             // Find all types that implement IBinding
             // Apparently, there are scenarios where this throws a ReflectionTypeLoadException - filtering it seems to help
-            IEnumerable<Assembly>? assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            IEnumerable<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<Type> types = new List<Type>();
             foreach (Assembly assembly in assemblies)
             {
@@ -39,9 +39,9 @@ namespace AzureFunctions.PowerShell.SDK
                 {
                     // Instantiate an object of this type, and call its method to load it into supportedBindings for use later
                     object? obj = Activator.CreateInstance(type);
-                    if (obj is not null)
+                    if (!BindingExtractor.hasSupportedBinding(type) && obj is not null)
                     {
-                        ((IBinding)obj).AddToExtractor();
+                        BindingExtractor.addSupportedBinding((IBinding)obj);
                     }
                 }
                 catch (MissingMethodException)
@@ -68,8 +68,7 @@ namespace AzureFunctions.PowerShell.SDK
 
         public static BindingInformation? ExtractInputBinding(AttributeAst attribute, ParameterAst parameter)
         {
-            List<IInputBinding> inputBindings = supportedBindings.Where(x => x is IInputBinding).Cast<IInputBinding>().ToList();
-            List<BindingInformation> bindings = new List<BindingInformation>();
+            IEnumerable<IInputBinding> inputBindings = supportedBindings.Where(x => x is IInputBinding).Cast<IInputBinding>();
             foreach (IInputBinding binding in inputBindings)
             {
                 if (binding.BindingMatches(attribute)) 
@@ -82,8 +81,7 @@ namespace AzureFunctions.PowerShell.SDK
 
         public static BindingInformation? ExtractOutputBinding(AttributeAst attribute)
         {
-            List<IOutputBinding> outputBindings = supportedBindings.Where(x => x is IOutputBinding).Cast<IOutputBinding>().ToList();
-            List<BindingInformation> bindings = new List<BindingInformation>();
+            IEnumerable<IOutputBinding> outputBindings = supportedBindings.Where(x => x is IOutputBinding).Cast<IOutputBinding>();
             foreach (IOutputBinding binding in outputBindings)
             {
                 if (binding.BindingMatches(attribute))
@@ -99,14 +97,14 @@ namespace AzureFunctions.PowerShell.SDK
             List<BindingInformation> defaultBindings = new List<BindingInformation>();
             foreach (BindingInformation existingInputBinding in existingInputBindings)
             {
-                // Try to figure out which IBininding class was used to create the BindingInformation 
+                // Try to figure out which IBinding class was used to create the BindingInformation 
                 //   Might be worth changing BindingInformation to refer to the instance of IBinding that created it
                 //   Would need to avoid serializing this information when returning to the worker. 
-                List<IBinding> matchingSupportedBindings = supportedBindings.Where(x => x.BindingType == existingInputBinding.Type).ToList();
+                IEnumerable<IBinding> matchingSupportedBindings = supportedBindings.Where(x => x.BindingType == existingInputBinding.Type);
 
                 if (matchingSupportedBindings.Count() > 0)
                 {
-                    foreach (IBinding matchingSupportedBinding in matchingSupportedBindings)
+                    foreach (IInputBinding matchingSupportedBinding in matchingSupportedBindings)
                     {
                         // Each IBinding is allowed to define its own list of default output bindings. It is also 
                         // given the responsibility of determining whether these bindings should be used, based on 

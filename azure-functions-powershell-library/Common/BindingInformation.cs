@@ -9,12 +9,13 @@ namespace Common
     {
         public enum Directions
         {
+            Unknown = -1,
             In = 0,
             Out = 1,
             Inout = 2
         }
 
-        public int Direction { get; set; } = -1;
+        public Directions Direction { get; set; } = Directions.Unknown;
         public string Type { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         // OtherInformation contains any other binding information not encapsulated above. When it is reserialized in the worker,

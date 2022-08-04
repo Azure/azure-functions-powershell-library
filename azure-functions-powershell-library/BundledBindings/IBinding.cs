@@ -15,8 +15,6 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
         public abstract string BindingAttributeName { get; }
         public abstract string BindingType { get; }
 
-        public List<BindingInformation> defaultOutputBindings = new List<BindingInformation>();
-
         public bool BindingMatches(AttributeAst attribute)
         {
             if (attribute.TypeName.Name == BindingAttributeName)
@@ -25,19 +23,5 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
             }
             return false;
         }
-
-        public void AddToExtractor()
-        {
-            if (!BindingExtractor.hasSupportedBinding(GetType()))
-            {
-                BindingExtractor.addSupportedBinding(this);
-            }
-        }
-
-        public virtual bool ShouldUseDefaultOutputBindings(List<BindingInformation> existingOutputBindings)
-        {
-            return false;
-        }
-
     }
 }

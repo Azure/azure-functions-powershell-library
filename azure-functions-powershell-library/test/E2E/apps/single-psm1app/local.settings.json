@@ -1,7 +1,7 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=andystaples416;AccountKey=U0EAWCKKErc22Ee3Js3RHbhHI439/bFC8pRWaPriLqpPnSOckMuynCcMVeHQF9Og/wmr6rilI4Ib+AStQ8eH9g==",
+    "AzureWebJobsStorage": "",
     "FUNCTIONS_WORKER_RUNTIME_VERSION": "7.2",
     "FUNCTIONS_WORKER_RUNTIME": "powershell",
     "AzureWebJobsFeatureFlags":"EnableWorkerIndexing"

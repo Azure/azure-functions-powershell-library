@@ -20,7 +20,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
         {
             BindingInformation bindingInformation = new BindingInformation();
             string? name = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0, Constants.DefaultDurableClientName);
-            bindingInformation.Direction = (int)BindingDirection;
+            bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;
             if (name != null)
             {

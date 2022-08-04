@@ -16,7 +16,7 @@ namespace Microsoft.Azure.Functions.PowerShell
         /// The path of the Azure Functions directory
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
-        public string? FunctionsAppDirectory { get; set; }
+        public string FunctionsAppDirectory { get; set; } = string.Empty;
 
         private string outputJson { get; set; } = string.Empty;
 
@@ -34,7 +34,7 @@ namespace Microsoft.Azure.Functions.PowerShell
                     ThrowTerminatingError(new ErrorRecord(new Exception("Functions app directory parameter is required and must be a valid directory"), "Invalid function app directory", ErrorCategory.ParserError, null));
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 ThrowTerminatingError(new ErrorRecord(ex, "Failed to index the function app", ErrorCategory.ParserError, null));
             }

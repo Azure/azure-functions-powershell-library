@@ -5,7 +5,6 @@
 
 using AzureFunctions.PowerShell.SDK.Common;
 using Common;
-using Microsoft.Azure.Functions.PowerShellWorker;
 using System.Management.Automation.Language;
 
 namespace AzureFunctions.PowerShell.SDK.BundledBindings
@@ -20,7 +19,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
         {
             BindingInformation bindingInformation = new BindingInformation();
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
-            bindingInformation.Direction = (int)BindingDirection;
+            bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;
             return bindingInformation;
         }

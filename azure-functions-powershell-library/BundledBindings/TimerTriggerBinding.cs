@@ -21,7 +21,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
             BindingInformation bindingInformation = new BindingInformation();
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
             string? chronExpression = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0);
-            bindingInformation.Direction = (int)BindingDirection;
+            bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;
             if (chronExpression != null)
             {

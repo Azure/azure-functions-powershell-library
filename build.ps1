@@ -91,7 +91,7 @@ Import-Module "$PSScriptRoot/tools/helper.psm1" -Force
 
 # Bootstrap step
 if ($Bootstrap.IsPresent) {
-    Write-Log "Validate and install missing prerequisits for building ..."
+    Write-Log "Validate and install missing prerequisites for building ..."
     Install-Dotnet
 
     if (-not (Get-Module -Name PSDepend -ListAvailable)) {

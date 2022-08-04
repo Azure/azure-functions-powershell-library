@@ -20,7 +20,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
         {
             BindingInformation bindingInformation = new BindingInformation();
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
-            bindingInformation.Direction = (int)BindingDirection;
+            bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;
             return bindingInformation;
         }
