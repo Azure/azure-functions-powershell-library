@@ -18,21 +18,24 @@ class HttpTrigger : Attribute {
     [string[]]$Methods
     [string]$Route
 
-    HttpTrigger() { }
+    HttpTrigger() { 
+        $this.RegisterBinding('anonymous', @('GET', 'POST'), $null)
+    }
 
     HttpTrigger([string]$AuthLevel) {
-        $this.AuthLevel = $AuthLevel
+        $this.RegisterBinding($AuthLevel, @('GET', 'POST'), $null)
     }
 
     HttpTrigger([string]$AuthLevel, [string[]]$Methods) {
-        $this.AuthLevel = $AuthLevel
-        $this.Methods = $Methods
+        $this.RegisterBinding($AuthLevel, $Methods, $null)
     }
 
     HttpTrigger([string]$AuthLevel, [string[]]$Methods, [string]$Route) {
-        $this.AuthLevel = $AuthLevel
-        $this.Methods = $Methods
-        $this.Route = $Route
+        $this.RegisterBinding($AuthLevel, $Methods, $Route)
+    }
+
+    RegisterBinding([string]$AuthLevel, [string[]]$Methods, [string]$Route) {
+        Register-Binding 'HttpTrigger' @{'AuthLevel' = $this.AuthLevel; 'Methods' = $this.Methods; 'Route' = $this.Route}
     }
 }
 

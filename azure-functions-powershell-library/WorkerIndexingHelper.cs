@@ -8,6 +8,7 @@ using AzureFunctions.PowerShell.SDK.Common;
 using Common;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
 
 namespace Microsoft.Azure.Functions.PowerShellWorker
 {
@@ -126,50 +127,25 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                 return;
             }
 
+            string rawCommand = paramBlock.ToString();
+            InitialSessionState sessionState = InitialSessionState.CreateDefault();
+            sessionState.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.Unrestricted;
+            System.Management.Automation.PowerShell powerShell = System.Management.Automation.PowerShell.Create(sessionState);
+            powerShell.AddScript("using module AzureFunctions.PowerShell.SDK");
+            powerShell.Invoke();
+            powerShell.Streams.ClearStreams();
+            powerShell.Commands.Clear();
+            powerShell.AddScript(rawCommand);
+            powerShell.Invoke();
+
             IEnumerable<AttributeAst>? functionAttribute = paramBlock.Attributes.Where(x => x.TypeName.Name == Constants.AttributeNames.Function && x.PositionalArguments.Count > 0);
             if (functionAttribute.Any() && functionAttribute.First().PositionalArguments[0].GetType() == typeof(StringConstantExpressionAst))
             {
                 thisFunction.Name = ((StringConstantExpressionAst)functionAttribute.First().PositionalArguments[0]).Value;
             }
 
-            List<BindingInformation> inputBindings = GetInputBindingInfo(paramBlock);
-            List<BindingInformation> outputBindings = GetOutputBindingInfo(paramBlock.Attributes);
-            List<BindingInformation> missingBindings = BindingExtractor.GetDefaultBindings(inputBindings, outputBindings);
-
-            thisFunction.Bindings.AddRange(inputBindings);
-            thisFunction.Bindings.AddRange(outputBindings);
-            thisFunction.Bindings.AddRange(missingBindings);
-        }
-
-        private static List<BindingInformation> GetInputBindingInfo(ParamBlockAst paramBlock)
-        {
-            List<BindingInformation> outputBindingInfo = new List<BindingInformation>();
-            foreach (ParameterAst parameter in paramBlock.Parameters)
-            {
-                foreach (AttributeAst attribute in parameter.Attributes)
-                {
-                    BindingInformation? bindingInfo = BindingExtractor.ExtractInputBinding(attribute, parameter);
-                    if (bindingInfo is not null)
-                    {
-                        outputBindingInfo.Add(bindingInfo);
-                    }
-                }
-            }
-            return outputBindingInfo;
-        }
-
-        private static List<BindingInformation> GetOutputBindingInfo(ReadOnlyCollection<AttributeAst> attributes)
-        {
-            List<BindingInformation> outputBindingInfo = new List<BindingInformation>();
-            foreach (AttributeAst attribute in attributes)
-            {
-                BindingInformation? bindingInformation = BindingExtractor.ExtractOutputBinding(attribute);
-                if (bindingInformation is not null)
-                {
-                    outputBindingInfo.Add(bindingInformation);
-                }
-            }
-            return outputBindingInfo;
+            thisFunction.Bindings.AddRange(BindingExtractor.unallocatedBindings);
+            BindingExtractor.unallocatedBindings.Clear();
         }
 
         // Everything below this point are static methods that may be used by classes implementing IBinding to extract information from 
@@ -225,7 +201,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
 
         private static bool ContainsLegacyFunctions(DirectoryInfo baseDir)
         {
-            List<DirectoryInfo> folders = baseDir.GetDirectories().ToList();
+            IEnumerable<DirectoryInfo> folders = baseDir.GetDirectories();
             foreach (DirectoryInfo folder in folders)
             {
                 FileInfo[] functionJsonFiles = folder.GetFiles(Constants.FunctionJson, SearchOption.TopDirectoryOnly);
