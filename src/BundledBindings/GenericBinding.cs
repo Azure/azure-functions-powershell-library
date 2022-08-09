@@ -25,15 +25,15 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
 
             if (string.IsNullOrEmpty(bindingType))
             {
-                problems.Add("Missing Type parameter");
+                problems.Add(AzPowerShellSdkStrings.MissingType);
             }
             if (string.IsNullOrEmpty(bindingName))
             {
-                problems.Add("Missing Name parameter");
+                problems.Add(AzPowerShellSdkStrings.MissingName);
             }
             if (string.IsNullOrEmpty(bindingDirection))
             {
-                problems.Add("Missing Direction parameter");
+                problems.Add(AzPowerShellSdkStrings.MissingDirection);
             }
 
             if (bindingDirection != null && Enum.GetNames(typeof(BindingInformation.Directions)).Select(x => x.ToLower()).Contains(bindingDirection.ToLower()))
@@ -50,12 +50,12 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
             
             if (bindingInformation.Direction == BindingInformation.Directions.Unknown)
             {
-                problems.Add("Must specify a valid binding direction");
+                problems.Add(AzPowerShellSdkStrings.InvalidBindingDirection);
             }
 
             if (problems.Count > 0)
             {
-                throw new Exception("The following problems exist with GenericBinding: \n" + string.Join("\n", problems));
+                throw new Exception(AzPowerShellSdkStrings.GenericBindingProblemsExist + string.Join("\n", problems));
             }
 
             if (!string.IsNullOrEmpty(bindingType) && !string.IsNullOrEmpty(bindingName))

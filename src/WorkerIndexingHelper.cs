@@ -26,7 +26,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
             }
             else
             {
-                throw new Exception($"Multiple bindings with name {inputBinding.Name} in function {currentFunction.Name}");
+                throw new Exception(string.Format(AzPowerShellSdkStrings.DuplicateBindings, inputBinding.Name, currentFunction.Name));
             }
         }
 
@@ -38,7 +38,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
             }
             else
             {
-                throw new Exception($"Multiple bindings with name {outputBinding.Name} in function {currentFunction.Name}");
+                throw new Exception(string.Format(AzPowerShellSdkStrings.DuplicateBindings, outputBinding.Name, currentFunction.Name));
             }
         }
 
@@ -71,7 +71,9 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
             ScriptBlockAst? fileAst = Parser.ParseFile(powerShellFile.FullName, out _, out ParseError[] errors);
             if (errors.Any())
             {
-                errorRecords.Add(new ErrorRecord(new Exception($"Couldn't parse the file: {powerShellFile.FullName}"), "Failed to parse file", ErrorCategory.ParserError, powerShellFile));
+                errorRecords.Add(new ErrorRecord(new Exception(string.Format(AzPowerShellSdkStrings.FailedToParseFile, 
+                                                                             powerShellFile.FullName)), 
+                                                 "Failed to parse file", ErrorCategory.ParserError, powerShellFile));
                 return fileFunctions;
             }
             if (string.Equals(powerShellFile.Extension, Constants.Ps1FileExtension, StringComparison.OrdinalIgnoreCase)) 
@@ -113,7 +115,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
             }
             else
             {
-                throw new Exception($"Multiple functions declared with name: {functionInformation.Name}");
+                throw new Exception(AzPowerShellSdkStrings.DuplicateFunctions + functionInformation.Name);
             }
         }
 
@@ -219,8 +221,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
                 return;
             }
 
-            //Console.WriteLine("Failed to add info thing");
-            errorRecords.Add(new ErrorRecord(new Exception($"Could not add additional information with name {name} to binding {bindingName} because no binding with this name was found"),
+            errorRecords.Add(new ErrorRecord(new Exception(string.Format(AzPowerShellSdkStrings.AdditionalInformationNoSuchBinding, name, bindingName)),
                 "Failed to add binding information", ErrorCategory.ObjectNotFound, bindingName));
         }
 

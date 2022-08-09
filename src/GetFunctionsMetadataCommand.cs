@@ -49,8 +49,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
                 }
                 else
                 {
-                    Console.WriteLine("Throwing a terminating error");
-                    ThrowTerminatingError(new ErrorRecord(new Exception("Functions app directory parameter is required and must be a valid directory"), "Invalid function app directory", ErrorCategory.ParserError, null));
+                    ThrowTerminatingError(new ErrorRecord(new Exception(AzPowerShellSdkStrings.InvalidFunctionsAppDirectory), "Invalid function app directory", ErrorCategory.ParserError, null));
                 }
             }
             catch (Exception ex)

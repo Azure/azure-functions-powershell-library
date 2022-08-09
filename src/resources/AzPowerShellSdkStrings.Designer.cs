@@ -61,11 +61,137 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not add additional information with name {name} to binding {bindingName} because no binding with this name was found.
+        /// </summary>
+        internal static string AdditionalInformationNoSuchBinding {
+            get {
+                return ResourceManager.GetString("AdditionalInformationNoSuchBinding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following problems exist with AdditionalInformation: \n {0}.
+        /// </summary>
+        internal static string AdditionalInformationProblemsExist {
+            get {
+                return ResourceManager.GetString("AdditionalInformationProblemsExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple bindings with name {0} in function {1}.
+        /// </summary>
+        internal static string DuplicateBindings {
+            get {
+                return ResourceManager.GetString("DuplicateBindings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple functions declared with name: .
+        /// </summary>
+        internal static string DuplicateFunctions {
+            get {
+                return ResourceManager.GetString("DuplicateFunctions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t parse the file: {0}.
+        /// </summary>
+        internal static string FailedToParseFile {
+            get {
+                return ResourceManager.GetString("FailedToParseFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following problems exist with GenericBinding: \n.
+        /// </summary>
+        internal static string GenericBindingProblemsExist {
+            get {
+                return ResourceManager.GetString("GenericBindingProblemsExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This function app directory contains functions which rely on host indexing, please remove them or configure this app for host indexing.
         /// </summary>
         internal static string HybridModelDetected {
             get {
                 return ResourceManager.GetString("HybridModelDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must specify a valid binding direction.
+        /// </summary>
+        internal static string InvalidBindingDirection {
+            get {
+                return ResourceManager.GetString("InvalidBindingDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Functions app directory parameter is required and must be a valid directory.
+        /// </summary>
+        internal static string InvalidFunctionsAppDirectory {
+            get {
+                return ResourceManager.GetString("InvalidFunctionsAppDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incorrectly formatted Event Hub attribute.
+        /// </summary>
+        internal static string MalformedEventHubAttribute {
+            get {
+                return ResourceManager.GetString("MalformedEventHubAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The BindingName is missing.
+        /// </summary>
+        internal static string MissingBindingName {
+            get {
+                return ResourceManager.GetString("MissingBindingName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Direction is missing.
+        /// </summary>
+        internal static string MissingDirection {
+            get {
+                return ResourceManager.GetString("MissingDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Name is missing.
+        /// </summary>
+        internal static string MissingName {
+            get {
+                return ResourceManager.GetString("MissingName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Type is missing.
+        /// </summary>
+        internal static string MissingType {
+            get {
+                return ResourceManager.GetString("MissingType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Value is missing.
+        /// </summary>
+        internal static string MissingValue {
+            get {
+                return ResourceManager.GetString("MissingValue", resourceCulture);
             }
         }
     }

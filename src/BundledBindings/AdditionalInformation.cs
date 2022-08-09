@@ -32,20 +32,20 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
 
             if (string.IsNullOrEmpty(bindingName))
             {
-                problems.Add("The BindingName is missing");
+                problems.Add(AzPowerShellSdkStrings.MissingBindingName);
             }
             if (string.IsNullOrEmpty(name))
             {
-                problems.Add("The Name is missing");
+                problems.Add(AzPowerShellSdkStrings.MissingName);
             }
             if (value == null)
             {
-                problems.Add("The Value is missing or invalid");
+                problems.Add(AzPowerShellSdkStrings.MissingValue);
             }
 
             if (problems.Count > 0)
             {
-                throw new Exception("The following problems exist with AdditionalInformation: \n" + string.Join("\n", problems));
+                throw new Exception(string.Format(AzPowerShellSdkStrings.AdditionalInformationProblemsExist, string.Join("\n", problems)));
             }
 
             //This condition will never be false but hey, type enforcement makes us add it anyway thanks logic

@@ -31,7 +31,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
             }
             else
             {
-                throw new Exception("Incorrectly formatted Event Hub attribute");
+                throw new Exception(AzPowerShellSdkStrings.MalformedEventHubAttribute);
             }
         }
     }
