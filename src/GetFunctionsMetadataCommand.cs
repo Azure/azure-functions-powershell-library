@@ -3,12 +3,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 //
 
-using Common;
-using Microsoft.Azure.Functions.PowerShellWorker;
+using Microsoft.Azure.Functions.PowerShell.SDK.Common;
 using System.Management.Automation;
 using System.Text.Json;
 
-namespace Microsoft.Azure.Functions.PowerShell
+namespace Microsoft.Azure.Functions.PowerShell.SDK
 {
     [Cmdlet(VerbsCommon.Get, "FunctionsMetadata")]
     public class GetFunctionsMetadataCommand : Cmdlet

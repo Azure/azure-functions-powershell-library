@@ -3,11 +3,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 //
 
-using Common;
+using Microsoft.Azure.Functions.PowerShell.SDK.Common;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Management.Automation.Language;
 
-namespace AzureFunctions.PowerShell.SDK.BundledBindings
+namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
 {
     public abstract class IBinding
     {

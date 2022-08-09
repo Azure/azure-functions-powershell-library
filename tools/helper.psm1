@@ -135,7 +135,7 @@ internal class {0} {{
     internal static global::System.Resources.ResourceManager ResourceManager {{
         get {{
             if (object.ReferenceEquals(resourceMan, null)) {{
-                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Azure.Functions.PowerShellWorker.resources.{0}", typeof({0}).Assembly);
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Azure.Functions.PowerShell.SDK.resources.{0}", typeof({0}).Assembly);
                 resourceMan = temp;
             }}
 
@@ -176,6 +176,7 @@ function Start-ResGen
     param([switch] $Force)
 
     $sourceDir = (Resolve-Path -Path "$PSScriptRoot/../src").Path
+    Write-Host $sourceDir
     $genDir = Join-Path -Path $sourceDir -ChildPath gen
 
     if (Test-Path -Path $genDir -PathType Container) {
@@ -187,10 +188,12 @@ function Start-ResGen
     }
 
     $resourceDir = Join-Path -Path $sourceDir -ChildPath resources
+    Write-Host $resourceDir
     $resxFiles = Get-ChildItem -Path $resourceDir -Filter *.resx
     $null = New-Item -Path $genDir -ItemType Directory -Force
 
     foreach ($resx in $resxFiles) {
+        Write-Host "File: $resx"
         $typeName = [System.IO.Path]::GetFileNameWithoutExtension($resx.FullName)
         $resXml = [xml] (Get-Content $resx.FullName)
         $properties = [System.Text.StringBuilder]::new()
@@ -198,7 +201,7 @@ function Start-ResGen
             $name = $data.name
             $value = $data.value -replace "`n","\n"
 
-            $property = $individual_resource_string_proprety -f $value, $name
+            $property = $individual_resource_string_property -f $value, $name
             $null = $properties.Append($property)
         }
         $typeCode = $generated_code_template -f $typeName, $properties.ToString()

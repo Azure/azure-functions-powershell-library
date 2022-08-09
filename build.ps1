@@ -31,12 +31,12 @@ param(
     $BuildNumber = '0'
 )
 
-#Requires -Version 6.2
+#Requires -Version 7.2
 
 $PowerShellVersion = '7.2'
 $TargetFramework = 'net6.0'
 $ModuleName = 'AzureFunctions.PowerShell.SDK'
-$RepoName = 'azure-functions-powershell-library'
+$RepoName = 'Microsoft.Azure.Functions.PowerShell.SDK'
 
 function Get-FunctionsCoreToolsDir {
     if ($CoreToolsDir) {
@@ -117,14 +117,14 @@ if (!$NoBuild.IsPresent) {
     }
 
     # Generate C# files for resources
-    Start-ResGen
+    Start-ResGen -Force
 
     dotnet publish -c $Configuration "/p:BuildNumber=$BuildNumber" $PSScriptRoot
 
-    $publishDir = "./$RepoName/bin/$Configuration/$TargetFramework/publish" 
-    $buildDir = "./$RepoName/bin/$Configuration/$TargetFramework" 
+    $publishDir = "./src/bin/$Configuration/$TargetFramework/publish" 
+    $buildDir = "./src/bin/$Configuration/$TargetFramework" 
 
-    $psFiles = Get-ChildItem "$PSScriptRoot/$RepoName" | Where-Object -Property Extension -in -Value ".ps1", ".psm1", ".psd1"
+    $psFiles = Get-ChildItem "$PSScriptRoot/src" | Where-Object -Property Extension -in -Value ".ps1", ".psm1", ".psd1"
 
     $psFiles | ForEach-Object { Copy-Item -Path $_.FullName -Destination $publishDir }
     $psFiles | ForEach-Object { Copy-Item -Path $_.FullName -Destination $buildDir }
@@ -140,10 +140,10 @@ if ($Test.IsPresent) {
 
     # Pester test phase - step 1: get the newly built module into the PSModulePath
     # TODO: Need to test conflicts, module with same name existing in another PsModulePath folder
-    $publishDir = "./$RepoName/bin/$Configuration/$TargetFramework/publish/*" 
-    $moduleDir = "./$RepoName/bin/$Configuration/$TargetFramework/$ModuleName" 
+    $publishDir = "$PSScriptRoot/src/bin/$Configuration/$TargetFramework/publish/*" 
+    $moduleDir = "$PSScriptRoot/src/bin/$Configuration/$TargetFramework/$ModuleName" 
 
-    $moduleLocation = "$PSScriptRoot/$RepoName/bin/$Configuration/$TargetFramework" 
+    $moduleLocation = "$PSScriptRoot/src/bin/$Configuration/$TargetFramework" 
 
     # Copy the module into another folder with the correct name
     if (!(Test-Path $moduleDir)) {
@@ -166,7 +166,7 @@ if ($Test.IsPresent) {
     }
 
     Import-Module Pester -PassThru
-    Invoke-Pester "./$RepoName/test/E2E/Get-FunctionsMetadata.Tests.ps1"
+    Invoke-Pester "./src/test/E2E/Get-FunctionsMetadata.Tests.ps1" -Output Detailed
     if ($Error[0].Fullyqualifiederrorid -eq 'PesterAssertionFailed') {throw 'Pester test failed'}        
 }
 

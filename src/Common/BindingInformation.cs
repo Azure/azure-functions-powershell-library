@@ -3,7 +3,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 //
 
-namespace Common
+namespace Microsoft.Azure.Functions.PowerShell.SDK.Common
 {
     public class BindingInformation
     {

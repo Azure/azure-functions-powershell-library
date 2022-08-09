@@ -3,14 +3,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 //
 
-using AzureFunctions.PowerShell.SDK;
-using AzureFunctions.PowerShell.SDK.Common;
-using Common;
+using Microsoft.Azure.Functions.PowerShell.SDK.Common;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Language;
 
-namespace Microsoft.Azure.Functions.PowerShellWorker
+namespace Microsoft.Azure.Functions.PowerShell.SDK
 {
     internal class WorkerIndexingHelper
     {
@@ -53,8 +51,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             }
             if (ContainsLegacyFunctions(Directory.CreateDirectory(baseDir)))
             {
-                throw new Exception("This function app directory contains functions which rely on host indexing, " +
-                    "please remove them or configure this app for host indexing");
+                throw new Exception(AzPowerShellSdkStrings.HybridModelDetected);
             }
             List<FileInfo> powerShellFiles = GetPowerShellFiles(new DirectoryInfo(baseDir));
             List<FunctionInformation> rpcFunctionMetadatas = new List<FunctionInformation>();
