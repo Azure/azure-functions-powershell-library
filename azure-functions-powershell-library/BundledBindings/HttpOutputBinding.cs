@@ -15,7 +15,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
 
         public override string BindingType => Constants.BindingNames.Http;
 
-        public override BindingInformation ExtractBinding(AttributeAst attribute)
+        public override BindingInformation? ExtractBinding(AttributeAst attribute)
         {
             string outputBindingName = attribute.PositionalArguments.Count > 0 &&
                                        attribute.PositionalArguments[0].GetType() == typeof(StringConstantExpressionAst) ?

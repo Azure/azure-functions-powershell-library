@@ -12,7 +12,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
     {
         public List<BindingInformation> defaultOutputBindings = new List<BindingInformation>();
 
-        public abstract BindingInformation ExtractBinding(AttributeAst attribute, ParameterAst parameter);
+        public abstract BindingInformation? ExtractBinding(AttributeAst attribute, ParameterAst parameter);
         
         public const BindingInformation.Directions BindingDirection = BindingInformation.Directions.In;
         public virtual bool ShouldUseDefaultOutputBindings(List<BindingInformation> existingOutputBindings)

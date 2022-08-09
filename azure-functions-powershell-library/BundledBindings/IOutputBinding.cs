@@ -16,6 +16,6 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
     public abstract class IOutputBinding : IBinding
     {
         public const BindingInformation.Directions BindingDirection = BindingInformation.Directions.Out;
-        public abstract BindingInformation ExtractBinding(AttributeAst attribute);
+        public abstract BindingInformation? ExtractBinding(AttributeAst attribute);
     }
 }

@@ -94,14 +94,6 @@ if ($Bootstrap.IsPresent) {
     Write-Log "Validate and install missing prerequisites for building ..."
     Install-Dotnet
 
-    if (-not (Get-Module -Name PSDepend -ListAvailable)) {
-        Write-Log -Warning "Module 'PSDepend' is missing. Installing 'PSDepend' ..."
-        Install-Module -Name PSDepend -Scope CurrentUser -Force
-    }
-    if (-not (Get-Module -Name platyPS -ListAvailable)) {
-        Write-Log -Warning "Module 'platyPS' is missing. Installing 'platyPS' ..."
-        Install-Module -Name platyPS -Scope CurrentUser -Force
-    }
     if (-not (Get-Module -Name Pester -ListAvailable)) {
         Write-Log -Warning "Module 'Pester' is missing. Installing 'Pester' ..."
         Install-Module -Name Pester

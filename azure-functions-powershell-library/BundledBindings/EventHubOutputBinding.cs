@@ -16,7 +16,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
 
         public override string BindingType => Constants.BindingNames.EventHub;
 
-        public override BindingInformation ExtractBinding(AttributeAst attribute)
+        public override BindingInformation? ExtractBinding(AttributeAst attribute)
         {
             BindingInformation bindingInformation = new BindingInformation();
             bindingInformation.Type = BindingType;

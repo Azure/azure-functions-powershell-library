@@ -7,14 +7,46 @@ using AzureFunctions.PowerShell.SDK;
 using AzureFunctions.PowerShell.SDK.Common;
 using Common;
 using System.Collections.ObjectModel;
+using System.Management.Automation;
 using System.Management.Automation.Language;
 
 namespace Microsoft.Azure.Functions.PowerShellWorker
 {
     internal class WorkerIndexingHelper
     {
-        internal static List<FunctionInformation> IndexFunctions(string baseDir)
+        private static FunctionInformation currentFunction = new FunctionInformation();
+        private static List<BindingInformation> inputBindings = new List<BindingInformation>();
+        private static List<BindingInformation> outputBindings = new List<BindingInformation>();
+
+        private static List<ErrorRecord> errorRecords = new List<ErrorRecord>();
+
+        private static void AddInputBinding(BindingInformation inputBinding)
         {
+            if (inputBindings.Where(x => x.Name == inputBinding.Name).Count() == 0)
+            {
+                inputBindings.Add(inputBinding);
+            }
+            else
+            {
+                throw new Exception($"Multiple bindings with name {inputBinding.Name} in function {currentFunction.Name}");
+            }
+        }
+
+        private static void AddOutputBinding(BindingInformation outputBinding)
+        {
+            if (outputBindings.Where(x => x.Name == outputBinding.Name).Count() == 0)
+            {
+                outputBindings.Add(outputBinding);
+            }
+            else
+            {
+                throw new Exception($"Multiple bindings with name {outputBinding.Name} in function {currentFunction.Name}");
+            }
+        }
+
+        internal static List<FunctionInformation> IndexFunctions(string baseDir, out List<ErrorRecord> errors)
+        {
+            errorRecords = new List<ErrorRecord>();
             if (!Directory.Exists(baseDir))
             {
                 throw new DirectoryNotFoundException();
@@ -32,6 +64,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                 rpcFunctionMetadatas.AddRange(IndexFunctionsInFile(powerShellFile));
             }
 
+            errors = errorRecords;
             return rpcFunctionMetadatas;
         }
 
@@ -41,8 +74,8 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             ScriptBlockAst? fileAst = Parser.ParseFile(powerShellFile.FullName, out _, out ParseError[] errors);
             if (errors.Any())
             {
-                throw new Exception($"Couldn't parse the file: {powerShellFile.FullName}");
-                // TODO: Probably don't throw here?
+                errorRecords.Add(new ErrorRecord(new Exception($"Couldn't parse the file: {powerShellFile.FullName}"), "Failed to parse file", ErrorCategory.ParserError, powerShellFile));
+                return fileFunctions;
             }
             if (string.Equals(powerShellFile.Extension, Constants.Ps1FileExtension, StringComparison.OrdinalIgnoreCase)) 
             {
@@ -51,7 +84,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                 if (paramAsts != null && paramAsts.Attributes.Where(x => x.TypeName.ToString() == Constants.AttributeNames.Function).Any())
                 {
                     // This is a function, return it 
-                    FunctionInformation functionInformation = CreateRpcMetadataFromFile(powerShellFile.FullName);
+                    FunctionInformation functionInformation = CreateFunctionInformationFromFile(powerShellFile.FullName);
                     AddFunctionIfNameUnique(functionInformation, fileFunctions);
                 }
             }
@@ -65,7 +98,7 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                     ((ParamBlockAst)x).Attributes.Where(z => z.TypeName.ToString() == Constants.AttributeNames.Function).Any(), true);
                     if (matchingBlocks.Any()) {
                         //This function is one we need to register
-                        FunctionInformation functionInformation = CreateRpcMetadataFromFunctionAst(powerShellFile.FullName, (FunctionDefinitionAst)potentialFunction);
+                        FunctionInformation functionInformation = CreateFunctionInformationFromFunctionAst(powerShellFile.FullName, (FunctionDefinitionAst)potentialFunction);
                         AddFunctionIfNameUnique(functionInformation, fileFunctions);
                     }
                     // If there are no matching blocks, this is a helper function that will live in the file
@@ -87,12 +120,12 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             }
         }
 
-        private static FunctionInformation CreateRpcMetadataFromFile(string powerShellFile)
+        private static FunctionInformation CreateFunctionInformationFromFile(string powerShellFile)
         {
             ScriptBlockAst? fileAst = Parser.ParseFile(powerShellFile, out _, out ParseError[] errors);
 
             FunctionInformation thisFunction = new FunctionInformation();
-
+            currentFunction = thisFunction;
             thisFunction.Directory = new FileInfo(powerShellFile).Directory!.FullName;
             thisFunction.ScriptFile = powerShellFile;
             thisFunction.Name = Path.GetFileName(powerShellFile).Split('.').First();
@@ -102,9 +135,11 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
 
             return thisFunction;
         }
-        private static FunctionInformation CreateRpcMetadataFromFunctionAst(string powerShellFile, FunctionDefinitionAst potentialFunction)
+
+        private static FunctionInformation CreateFunctionInformationFromFunctionAst(string powerShellFile, FunctionDefinitionAst potentialFunction)
         {
             FunctionInformation thisFunction = new FunctionInformation();
+            currentFunction = thisFunction;
 
             thisFunction.Directory = new FileInfo(powerShellFile).Directory!.FullName;
             thisFunction.ScriptFile = powerShellFile;
@@ -132,8 +167,11 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                 thisFunction.Name = ((StringConstantExpressionAst)functionAttribute.First().PositionalArguments[0]).Value;
             }
 
-            List<BindingInformation> inputBindings = GetInputBindingInfo(paramBlock);
-            List<BindingInformation> outputBindings = GetOutputBindingInfo(paramBlock.Attributes);
+            inputBindings = new List<BindingInformation>();
+            outputBindings = new List<BindingInformation>();
+
+            GetInputBindingInfo(paramBlock);
+            GetOutputBindingInfo(paramBlock.Attributes);
             List<BindingInformation> missingBindings = BindingExtractor.GetDefaultBindings(inputBindings, outputBindings);
 
             thisFunction.Bindings.AddRange(inputBindings);
@@ -141,9 +179,8 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             thisFunction.Bindings.AddRange(missingBindings);
         }
 
-        private static List<BindingInformation> GetInputBindingInfo(ParamBlockAst paramBlock)
+        private static void GetInputBindingInfo(ParamBlockAst paramBlock)
         {
-            List<BindingInformation> outputBindingInfo = new List<BindingInformation>();
             foreach (ParameterAst parameter in paramBlock.Parameters)
             {
                 foreach (AttributeAst attribute in parameter.Attributes)
@@ -151,25 +188,43 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
                     BindingInformation? bindingInfo = BindingExtractor.ExtractInputBinding(attribute, parameter);
                     if (bindingInfo is not null)
                     {
-                        outputBindingInfo.Add(bindingInfo);
+                        AddInputBinding(bindingInfo);
                     }
                 }
             }
-            return outputBindingInfo;
         }
 
-        private static List<BindingInformation> GetOutputBindingInfo(ReadOnlyCollection<AttributeAst> attributes)
+        private static void GetOutputBindingInfo(ReadOnlyCollection<AttributeAst> attributes)
         {
-            List<BindingInformation> outputBindingInfo = new List<BindingInformation>();
             foreach (AttributeAst attribute in attributes)
             {
                 BindingInformation? bindingInformation = BindingExtractor.ExtractOutputBinding(attribute);
                 if (bindingInformation is not null)
                 {
-                    outputBindingInfo.Add(bindingInformation);
+                    AddOutputBinding(bindingInformation);
                 }
             }
-            return outputBindingInfo;
+        }
+
+        public static void AddBindingInformation(string bindingName, string name, object value)
+        {
+            IEnumerable<BindingInformation> matchingInputBindings = inputBindings.Where(x => x.Name == bindingName);
+            if (matchingInputBindings.Count() == 1)
+            {
+                matchingInputBindings.First().otherInformation.Add(name, value);
+                return;
+            }
+
+            IEnumerable<BindingInformation> matchingOutputBindings = outputBindings.Where(x => x.Name == bindingName);
+            if (matchingOutputBindings.Count() == 1)
+            {
+                matchingOutputBindings.First().otherInformation.Add(name, value);
+                return;
+            }
+
+            //Console.WriteLine("Failed to add info thing");
+            errorRecords.Add(new ErrorRecord(new Exception($"Could not add additional information with name {name} to binding {bindingName} because no binding with this name was found"),
+                "Failed to add binding information", ErrorCategory.ObjectNotFound, bindingName));
         }
 
         // Everything below this point are static methods that may be used by classes implementing IBinding to extract information from 
@@ -196,10 +251,10 @@ namespace Microsoft.Azure.Functions.PowerShellWorker
             {
                 return new List<string> { ((StringConstantExpressionAst)expressionAst).Value };
             }
-            else if (expressionAst.GetType() == typeof(ArrayExpressionAst))
+            else if (expressionAst.GetType() == typeof(ParenExpressionAst))
             {
                 List<string> values = new List<string>();
-                IEnumerable<Ast>? arrayValues = ((ArrayExpressionAst)expressionAst).FindAll(x => x is StringConstantExpressionAst, false);
+                IEnumerable<Ast>? arrayValues = ((ParenExpressionAst)expressionAst).FindAll(x => x is StringConstantExpressionAst, false);
                 foreach (StringConstantExpressionAst one in arrayValues)
                 {
                     values.Add(one.Value);

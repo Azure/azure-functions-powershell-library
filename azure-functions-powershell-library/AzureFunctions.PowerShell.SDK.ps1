@@ -39,8 +39,6 @@ class HttpTrigger : Attribute {
 class TimerTrigger : Attribute { 
     [string]$Chron
 
-    TimerTrigger() { }
-
     TimerTrigger([string]$Chron=$null) {
         $this.Chron = $Chron
     }
@@ -56,8 +54,6 @@ class DurableClient : Attribute {
     DurableClient([string]$Name) {
         $this.Name = $Name
     }
-
-    DurableClient() { }
 }
 
 class OrchestrationTrigger : Attribute {
@@ -89,5 +85,27 @@ class EventHubOutput : Attribute {
         $this.Name = $Name
         $this.EventHubName = $EventHubName
         $this.Connection = $Connection
+    }
+}
+
+class GenericBinding : Attribute {
+    [string]$Type
+    [string]$Name
+    [string]$Direction
+    GenericBinding([string]$Type, [string]$Name, [string]$Direction) {
+        $this.Type = $Type
+        $this.Name = $Name
+        $this.Direction = $Direction
+    }
+}
+
+class AdditionalInformation : Attribute {
+    [string]$BindingName
+    [string]$Name
+    $Value
+    AdditionalInformation([string]$BindingName, [string]$Name, $Value) {
+        $this.BindingName = $BindingName
+        $this.Name = $Name
+        $this.Value = $Value
     }
 }

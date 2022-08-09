@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//
 
 namespace AzureFunctions.PowerShell.SDK.Common
 {
@@ -31,6 +30,8 @@ namespace AzureFunctions.PowerShell.SDK.Common
             public static string OrchestrationTrigger = "OrchestrationTrigger";
             public static string TimerTrigger = "TimerTrigger";
             public static string Function = "Function";
+            public static string GenericBinding = "GenericBinding";
+            public static string AdditionalInformation = "AdditionalInformation";
         }
 
         internal class BindingNames
@@ -44,6 +45,7 @@ namespace AzureFunctions.PowerShell.SDK.Common
             public static string HttpTrigger = "httpTrigger";
             public static string OrchestrationTrigger = "orchestrationTrigger";
             public static string TimerTrigger = "timerTrigger";
+            public static string NOT_USED = "NOT_USED";
         }
 
         internal class JsonPropertyNames

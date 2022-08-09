@@ -15,7 +15,7 @@ namespace AzureFunctions.PowerShell.SDK.BundledBindings
 
         public override string BindingType => Constants.BindingNames.EventGridTrigger;
 
-        public override BindingInformation ExtractBinding(AttributeAst attribute, ParameterAst parameter)
+        public override BindingInformation? ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {
             BindingInformation bindingInformation = new BindingInformation();
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
