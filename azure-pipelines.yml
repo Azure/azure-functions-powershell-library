@@ -25,7 +25,7 @@ steps:
     ./build.ps1 -Clean -Configuration Release
   displayName: 'Building PowerShell module'
 
-- pwsh: ./build.ps1 -NoBuild -Test
+- pwsh: ./build.ps1 -NoBuild -Test -Configuration Release
   displayName: 'Running tests'
 
 # Add stage to publish to the PowerShell Gallery on release build
