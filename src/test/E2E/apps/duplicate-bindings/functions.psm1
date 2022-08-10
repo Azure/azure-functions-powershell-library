@@ -1,0 +1,19 @@
+using namespace System.Net
+using module AzureFunctions.PowerShell.SDK
+
+function TestTrigger {
+    [Function()]
+    param(
+        [GenericBinding('httpTrigger', 'Request', 'in')]
+        [GenericBinding('httpTrigger', 'Request', 'in')]
+        $Request, 
+        $TriggerMetadata
+    )
+
+    $value =  ([HttpResponseContext]@{
+        StatusCode = [HttpStatusCode]::OK
+        Body = 'The Http trigger invocation was successful'
+    })
+
+    $value | Push-OutputBinding -Name Response
+}
