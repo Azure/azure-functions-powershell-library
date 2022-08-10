@@ -38,6 +38,8 @@ $TargetFramework = 'net6.0'
 $ModuleName = 'AzureFunctions.PowerShell.SDK'
 $RepoName = 'Microsoft.Azure.Functions.PowerShell.SDK'
 
+Write-Host "Build configuration: $Configuration"
+
 function Get-FunctionsCoreToolsDir {
     if ($CoreToolsDir) {
         $CoreToolsDir
@@ -112,10 +114,7 @@ Find-Dotnet
 
 # Build step
 if (!$NoBuild.IsPresent) {
-    if (-not (Get-Module -Name PSDepend -ListAvailable)) {
-        throw "Cannot find the 'PSDepend' module. Please specify '-Bootstrap' to install build dependencies."
-    }
-
+    
     # Generate C# files for resources
     Start-ResGen -Force
 
