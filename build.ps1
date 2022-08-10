@@ -166,7 +166,7 @@ if ($Test.IsPresent) {
     }
 
     Import-Module Pester -PassThru
-    Invoke-Pester "./src/test/E2E/Get-FunctionsMetadata.Tests.ps1" -Output Detailed
+    Invoke-Pester "./test/E2E/Get-FunctionsMetadata.Tests.ps1" -Output Detailed
     if ($Error[0].Fullyqualifiederrorid -eq 'PesterAssertionFailed') {throw 'Pester test failed'}        
 }
 
