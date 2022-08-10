@@ -30,7 +30,8 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.Common
             public static string OrchestrationTrigger = "OrchestrationTrigger";
             public static string TimerTrigger = "TimerTrigger";
             public static string Function = "Function";
-            public static string GenericBinding = "GenericBinding";
+            public static string InputBinding = "InputBinding";
+            public static string OutputBinding = "OutputBinding";
             public static string AdditionalInformation = "AdditionalInformation";
         }
 

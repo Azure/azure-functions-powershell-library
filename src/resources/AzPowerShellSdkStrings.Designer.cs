@@ -61,7 +61,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Could not add additional information with name {name} to binding {bindingName} because no binding with this name was found.
+        ///   Looks up a localized string similar to Could not add additional information with name {0} to binding {1} because no binding with this name was found.
         /// </summary>
         internal static string AdditionalInformationNoSuchBinding {
             get {
@@ -106,20 +106,20 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following problems exist with GenericBinding: \n.
-        /// </summary>
-        internal static string GenericBindingProblemsExist {
-            get {
-                return ResourceManager.GetString("GenericBindingProblemsExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This function app directory contains functions which rely on host indexing, please remove them or configure this app for host indexing.
         /// </summary>
         internal static string HybridModelDetected {
             get {
                 return ResourceManager.GetString("HybridModelDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following problems exist with InputBinding: \n.
+        /// </summary>
+        internal static string InputBindingProblemsExist {
+            get {
+                return ResourceManager.GetString("InputBindingProblemsExist", resourceCulture);
             }
         }
         
@@ -192,6 +192,15 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.resources {
         internal static string MissingValue {
             get {
                 return ResourceManager.GetString("MissingValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following problems exist with OutputBinding: \n.
+        /// </summary>
+        internal static string OutputBindingProblemsExist {
+            get {
+                return ResourceManager.GetString("OutputBindingProblemsExist", resourceCulture);
             }
         }
     }

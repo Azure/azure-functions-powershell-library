@@ -176,7 +176,6 @@ function Start-ResGen
     param([switch] $Force)
 
     $sourceDir = (Resolve-Path -Path "$PSScriptRoot/../src").Path
-    Write-Host $sourceDir
     $genDir = Join-Path -Path $sourceDir -ChildPath gen
 
     if (Test-Path -Path $genDir -PathType Container) {
@@ -188,12 +187,10 @@ function Start-ResGen
     }
 
     $resourceDir = Join-Path -Path $sourceDir -ChildPath resources
-    Write-Host $resourceDir
     $resxFiles = Get-ChildItem -Path $resourceDir -Filter *.resx
     $null = New-Item -Path $genDir -ItemType Directory -Force
 
     foreach ($resx in $resxFiles) {
-        Write-Host "File: $resx"
         $typeName = [System.IO.Path]::GetFileNameWithoutExtension($resx.FullName)
         $resXml = [xml] (Get-Content $resx.FullName)
         $properties = [System.Text.StringBuilder]::new()

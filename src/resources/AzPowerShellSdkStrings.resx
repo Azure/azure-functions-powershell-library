@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AdditionalInformationNoSuchBinding" xml:space="preserve">
-    <value>Could not add additional information with name {name} to binding {bindingName} because no binding with this name was found</value>
+    <value>Could not add additional information with name {0} to binding {1} because no binding with this name was found</value>
   </data>
   <data name="AdditionalInformationProblemsExist" xml:space="preserve">
     <value>The following problems exist with AdditionalInformation: \n {0}</value>
@@ -132,11 +132,11 @@
   <data name="FailedToParseFile" xml:space="preserve">
     <value>Couldn't parse the file: {0}</value>
   </data>
-  <data name="GenericBindingProblemsExist" xml:space="preserve">
-    <value>The following problems exist with GenericBinding: \n</value>
-  </data>
   <data name="HybridModelDetected" xml:space="preserve">
     <value>This function app directory contains functions which rely on host indexing, please remove them or configure this app for host indexing</value>
+  </data>
+  <data name="InputBindingProblemsExist" xml:space="preserve">
+    <value>The following problems exist with InputBinding: \n</value>
   </data>
   <data name="InvalidBindingDirection" xml:space="preserve">
     <value>Must specify a valid binding direction</value>
@@ -161,5 +161,8 @@
   </data>
   <data name="MissingValue" xml:space="preserve">
     <value>The Value is missing</value>
+  </data>
+  <data name="OutputBindingProblemsExist" xml:space="preserve">
+    <value>The following problems exist with OutputBinding: \n</value>
   </data>
 </root>

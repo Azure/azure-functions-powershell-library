@@ -69,6 +69,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
 
         public static BindingInformation? ExtractInputBinding(AttributeAst attribute, ParameterAst parameter)
         {
+            Console.WriteLine(attribute.TypeName.Name);
             IEnumerable<IInputBinding> inputBindings = supportedBindings.Where(x => x is IInputBinding).Cast<IInputBinding>();
             foreach (IInputBinding binding in inputBindings)
             {
