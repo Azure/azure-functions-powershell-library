@@ -54,7 +54,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
             }
             catch (Exception ex)
             {
-                ThrowTerminatingError(new ErrorRecord(ex, "Failed to index the function app", ErrorCategory.ParserError, null));
+                ThrowTerminatingError(new ErrorRecord(ex, "FailToIndexFunctionApp", ErrorCategory.ParserError, null));
             }
         }
 
