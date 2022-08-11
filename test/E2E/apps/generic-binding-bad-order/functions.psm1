@@ -5,7 +5,7 @@ function TestTrigger {
     [Function()]
     param(
         [AdditionalInformation('Request', 'authLevel', 'anonymous')]
-        [GenericBinding('httpTrigger', 'Request', 'in')]
+        [InputBinding('httpTrigger')]
         [AdditionalInformation('Request', 'methods', ('GET', 'POST'))]
         $Request, 
         $TriggerMetadata

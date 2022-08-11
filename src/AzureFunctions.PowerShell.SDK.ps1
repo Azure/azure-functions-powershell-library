@@ -88,14 +88,26 @@ class EventHubOutput : Attribute {
     }
 }
 
-class GenericBinding : Attribute {
+class InputBinding : Attribute {
     [string]$Type
     [string]$Name
-    [string]$Direction
-    GenericBinding([string]$Type, [string]$Name, [string]$Direction) {
+    InputBinding([string]$Type) {
+        $this.Type = $Type
+    }
+
+    InputBinding([string]$Type, [string]$Name) {
         $this.Type = $Type
         $this.Name = $Name
-        $this.Direction = $Direction
+    }
+}
+
+class OutputBinding : Attribute {
+    [string]$Type
+    [string]$Name
+
+    OutputBinding([string]$Type, [string]$Name) {
+        $this.Type = $Type
+        $this.Name = $Name
     }
 }
 

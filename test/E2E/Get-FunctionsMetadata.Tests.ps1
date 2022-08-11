@@ -25,7 +25,7 @@ Describe 'Poorly formatted .ps1 file' {
     }
 
     It 'The error should be non-terminating' {
-        { Get-FunctionsMetadata ("$PSScriptRoot/apps/poorly-formatted") } 
+        { Get-FunctionsMetadata ("$PSScriptRoot/apps/poorly-formatted") -ErrorAction Ignore } 
             | Should -Not -Throw 
     }
 }
@@ -51,7 +51,7 @@ Describe 'AdditionalInformaton before binding' {
     }
 
     It 'The error should be non-terminating' {
-        { Get-FunctionsMetadata ("$PSScriptRoot/apps/generic-binding-bad-order") }
+        { Get-FunctionsMetadata ("$PSScriptRoot/apps/generic-binding-bad-order") -ErrorAction Ignore }
             | Should -Not -Throw 
     }
 }

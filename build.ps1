@@ -118,6 +118,8 @@ if (!$NoBuild.IsPresent) {
     # Generate C# files for resources
     Start-ResGen -Force
 
+    Write-Host "Building at $PSScriptRoot"
+
     dotnet publish -c $Configuration "/p:BuildNumber=$BuildNumber" $PSScriptRoot
 
     $publishDir = "./src/bin/$Configuration/$TargetFramework/publish" 
