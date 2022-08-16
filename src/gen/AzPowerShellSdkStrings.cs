@@ -97,6 +97,16 @@ internal class AzPowerShellSdkStrings {
 
     /// <summary>
     /// Looks up a localized string similar to 
+    ///   The following functions do not have any bindings: {0}
+    /// </summary>
+    internal static string FunctionsWithNoBindings {
+        get {
+            return ResourceManager.GetString("FunctionsWithNoBindings", resourceCulture);
+        }
+    }
+
+    /// <summary>
+    /// Looks up a localized string similar to 
     ///   This function app directory contains functions which rely on host indexing, please remove them or configure this app for host indexing
     /// </summary>
     internal static string HybridModelDetected {
@@ -127,7 +137,7 @@ internal class AzPowerShellSdkStrings {
 
     /// <summary>
     /// Looks up a localized string similar to 
-    ///   Functions app directory parameter is required and must be a valid directory
+    ///   {0} is not a valid directory
     /// </summary>
     internal static string InvalidFunctionsAppDirectory {
         get {
@@ -162,6 +172,16 @@ internal class AzPowerShellSdkStrings {
     internal static string MissingDirection {
         get {
             return ResourceManager.GetString("MissingDirection", resourceCulture);
+        }
+    }
+
+    /// <summary>
+    /// Looks up a localized string similar to 
+    ///   {0} is not a valid Functions App - no host.json detected
+    /// </summary>
+    internal static string MissingHostJson {
+        get {
+            return ResourceManager.GetString("MissingHostJson", resourceCulture);
         }
     }
 

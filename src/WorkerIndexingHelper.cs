@@ -42,23 +42,27 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
             }
         }
 
-        internal static List<FunctionInformation> IndexFunctions(string baseDir, out List<ErrorRecord> errors)
+        internal static List<FunctionInformation> IndexFunctions(DirectoryInfo baseDir, out List<ErrorRecord> errors)
         {
             errorRecords = new List<ErrorRecord>();
-            if (!Directory.Exists(baseDir))
-            {
-                throw new DirectoryNotFoundException();
-            }
-            if (ContainsLegacyFunctions(Directory.CreateDirectory(baseDir)))
+            if (ContainsLegacyFunctions(baseDir))
             {
                 throw new Exception(AzPowerShellSdkStrings.HybridModelDetected);
             }
-            List<FileInfo> powerShellFiles = GetPowerShellFiles(new DirectoryInfo(baseDir));
+            List<FileInfo> powerShellFiles = GetPowerShellFiles(baseDir);
             List<FunctionInformation> rpcFunctionMetadatas = new List<FunctionInformation>();
 
             foreach (FileInfo powerShellFile in powerShellFiles)
             {
                 rpcFunctionMetadatas.AddRange(IndexFunctionsInFile(powerShellFile));
+            }
+
+            IEnumerable<FunctionInformation> noBindingFunctions = rpcFunctionMetadatas.Where(x => x.Bindings.Count() == 0);
+            if (noBindingFunctions.Any())
+            {
+                errorRecords.Add(new ErrorRecord(new Exception(string.Format(AzPowerShellSdkStrings.FunctionsWithNoBindings, 
+                                                               string.Join(", ", noBindingFunctions.Select(x => x.Name)))), 
+                                                 "FunctionsWithNoBindings", ErrorCategory.SyntaxError, noBindingFunctions));
             }
 
             errors = errorRecords;
