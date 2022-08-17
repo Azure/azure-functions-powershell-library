@@ -17,11 +17,11 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty]
-        public string FunctionsAppDirectoryString { get; set; } = "";
+        public string FunctionAppDirectory { get; set; } = "";
 
 
         /// <summary>
-        /// (Optional) If specified, will force the value to be set for a specified output binding.
+        /// (Optional) If specified, will print the output in formatted json
         /// </summary>
         [Parameter]
         public SwitchParameter PrettyPrint { get; set; }
@@ -36,15 +36,15 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
                 SessionState ss = new SessionState();
                 string current = Directory.GetCurrentDirectory();
                 Directory.SetCurrentDirectory(ss.Path.CurrentFileSystemLocation.Path);
-                FunctionsAppDirectoryString = Path.GetFullPath(FunctionsAppDirectoryString);
+                FunctionAppDirectory = Path.GetFullPath(FunctionAppDirectory);
                 Directory.SetCurrentDirectory(current);
 
-                if (!Directory.Exists(FunctionsAppDirectoryString))
+                if (!Directory.Exists(FunctionAppDirectory))
                 {
-                    ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(AzPowerShellSdkStrings.InvalidFunctionsAppDirectory, FunctionsAppDirectoryString)), "InvalidFunctionAppDirectory", ErrorCategory.ParserError, null));
+                    ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(AzPowerShellSdkStrings.InvalidFunctionsAppDirectory, FunctionAppDirectory)), "InvalidFunctionAppDirectory", ErrorCategory.ParserError, null));
                 }
 
-                DirectoryInfo FunctionsAppDirectory = new DirectoryInfo(FunctionsAppDirectoryString);
+                DirectoryInfo FunctionsAppDirectory = new DirectoryInfo(FunctionAppDirectory);
 
                 if(!IsValidFunctionsAppDirectory(FunctionsAppDirectory))
                 {
