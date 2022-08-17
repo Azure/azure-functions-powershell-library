@@ -19,7 +19,6 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
         [ValidateNotNullOrEmpty]
         public string FunctionsAppDirectoryString { get; set; } = "";
 
-        private string outputJson { get; set; } = string.Empty;
 
         /// <summary>
         /// (Optional) If specified, will force the value to be set for a specified output binding.
@@ -27,6 +26,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
         [Parameter]
         public SwitchParameter PrettyPrint { get; set; }
 
+        private string outputJson { get; set; } = string.Empty;
 
         protected override void ProcessRecord()
         {
@@ -39,7 +39,6 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
                 FunctionsAppDirectoryString = Path.GetFullPath(FunctionsAppDirectoryString);
                 Directory.SetCurrentDirectory(current);
 
-                Console.WriteLine(FunctionsAppDirectoryString);
                 if (!Directory.Exists(FunctionsAppDirectoryString))
                 {
                     ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(AzPowerShellSdkStrings.InvalidFunctionsAppDirectory, FunctionsAppDirectoryString)), "InvalidFunctionAppDirectory", ErrorCategory.ParserError, null));

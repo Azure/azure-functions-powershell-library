@@ -4,8 +4,6 @@ using module AzureFunctions.PowerShell.SDK
 function TestTrigger {
     [Function()]
     param(
-        [InputBinding('httpTrigger', 'Request', 'in')]
-        [InputBinding('httpTrigger', 'Request', 'in')]
         $Request, 
         $TriggerMetadata
     )
