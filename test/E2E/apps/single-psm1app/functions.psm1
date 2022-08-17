@@ -4,7 +4,7 @@ using module AzureFunctions.PowerShell.SDK
 function TestTrigger {
     [Function()]
     param(
-        [HttpTrigger('anonymous', ('get', 'post'))]
+        [HttpTrigger(AuthLevel='anonymous', Methods=('get', 'post'))]
         $Request, 
         $TriggerMetadata
     )

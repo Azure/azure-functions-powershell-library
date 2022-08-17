@@ -16,29 +16,23 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
 
         public override BindingInformation? ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {
-            string? bindingName = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0);
-            string? name = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 1);
-            object? value = null;
-            if (attribute.PositionalArguments.Count() >= 2 && attribute.PositionalArguments[2].GetType() == typeof(StringConstantExpressionAst))
-            {
-                value = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 2);
-            }
-            else if (attribute.PositionalArguments.Count() >= 2)
-            {
-                value = WorkerIndexingHelper.ExtractOneOrMore(attribute.PositionalArguments[2]);
-            }
+            string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "BindingName");
+            string name = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Name");
+            object value = WorkerIndexingHelper.GetNamedArgumentDefaultTypeValue(attribute, "Value", "");
 
             List<string> problems = new List<string>();
 
-            if (string.IsNullOrEmpty(bindingName))
+            if (string.IsNullOrWhiteSpace(bindingName))
             {
                 problems.Add(AzPowerShellSdkStrings.MissingBindingName);
             }
-            if (string.IsNullOrEmpty(name))
+
+            if (string.IsNullOrWhiteSpace(name))
             {
                 problems.Add(AzPowerShellSdkStrings.MissingName);
             }
-            if (value == null)
+
+            if (value.GetType() == typeof(string) && string.IsNullOrWhiteSpace((string)value))
             {
                 problems.Add(AzPowerShellSdkStrings.MissingValue);
             }

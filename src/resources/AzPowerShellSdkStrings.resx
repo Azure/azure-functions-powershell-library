@@ -123,6 +123,9 @@
   <data name="AdditionalInformationProblemsExist" xml:space="preserve">
     <value>The following problems exist with AdditionalInformation: \n {0}</value>
   </data>
+  <data name="ChronExpressionMissingOrInvalid" xml:space="preserve">
+    <value>The chron expression for TimerTrigger binding is missing or invalid</value>
+  </data>
   <data name="DuplicateBindings" xml:space="preserve">
     <value>Multiple bindings with name {0} in function {1}</value>
   </data>

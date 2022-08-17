@@ -4,8 +4,8 @@ using module AzureFunctions.PowerShell.SDK
 function DurableFunctionsHttpStart1 {
     [Function()]
     param(
-        [DurableClient('starter')]
-        [HttpTrigger('anonymous', ('get', 'post'), 'DurableStart')]
+        [DurableClient(Name='starter')]
+        [HttpTrigger(AuthLevel='anonymous', Methods=('get', 'post'), Route='DurableStart')]
         $Request, 
         $TriggerMetadata
     )

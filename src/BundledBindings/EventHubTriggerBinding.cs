@@ -17,14 +17,17 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
         public override BindingInformation? ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {
             BindingInformation bindingInformation = new BindingInformation();
+
             bindingInformation.Type = BindingType;
             bindingInformation.Direction = BindingDirection;
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
-            string? eventHubName = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0);
-            string? consumerGroup = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 1);
-            string? cardinality = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 2);
-            string? connection = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 3);
-            if (eventHubName is not null && consumerGroup is not null && cardinality is not null && connection is not null)
+
+            string eventHubName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "EventHubName");
+            string consumerGroup = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "ConsumerGroup");
+            string cardinality = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Cardinality");
+            string connection = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Connection");
+
+            if (!string.IsNullOrWhiteSpace(eventHubName) && !string.IsNullOrWhiteSpace(consumerGroup) && !string.IsNullOrWhiteSpace(cardinality) && !string.IsNullOrWhiteSpace(connection))
             {
                 bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.EventHubName, eventHubName);
                 bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.ConsumerGroup, consumerGroup);

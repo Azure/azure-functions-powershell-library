@@ -67,6 +67,16 @@ internal class AzPowerShellSdkStrings {
 
     /// <summary>
     /// Looks up a localized string similar to 
+    ///   The chron expression for TimerTrigger binding is missing or invalid
+    /// </summary>
+    internal static string ChronExpressionMissingOrInvalid {
+        get {
+            return ResourceManager.GetString("ChronExpressionMissingOrInvalid", resourceCulture);
+        }
+    }
+
+    /// <summary>
+    /// Looks up a localized string similar to 
     ///   Multiple bindings with name {0} in function {1}
     /// </summary>
     internal static string DuplicateBindings {

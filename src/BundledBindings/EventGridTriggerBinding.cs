@@ -17,9 +17,11 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
         public override BindingInformation? ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {
             BindingInformation bindingInformation = new BindingInformation();
+
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
             bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;
+
             return bindingInformation;
         }
     }

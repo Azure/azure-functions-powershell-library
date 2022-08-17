@@ -5,6 +5,7 @@
 
 using Microsoft.Azure.Functions.PowerShell.SDK.Common;
 using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Management.Automation.Language;
 
@@ -164,10 +165,10 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
                 return;
             }
 
-            IEnumerable<AttributeAst>? functionAttribute = paramBlock.Attributes.Where(x => x.TypeName.Name == Constants.AttributeNames.Function && x.PositionalArguments.Count > 0);
-            if (functionAttribute.Any() && functionAttribute.First().PositionalArguments[0].GetType() == typeof(StringConstantExpressionAst))
+            IEnumerable<AttributeAst>? functionAttribute = paramBlock.Attributes.Where(x => x.TypeName.Name == Constants.AttributeNames.Function && x.NamedArguments.Where(x => x.ArgumentName == "Name").Any());
+            if (functionAttribute.Any() && functionAttribute.First().NamedArguments.Where(x => x.ArgumentName == "Name").First().Argument.GetType() == typeof(StringConstantExpressionAst))
             {
-                thisFunction.Name = ((StringConstantExpressionAst)functionAttribute.First().PositionalArguments[0]).Value;
+                thisFunction.Name = ((StringConstantExpressionAst)functionAttribute.First().NamedArguments.Where(x => x.ArgumentName == "Name").First().Argument).Value;
             }
 
             inputBindings = new List<BindingInformation>();
@@ -232,11 +233,58 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
         // Everything below this point are static methods that may be used by classes implementing IBinding to extract information from 
         //   the AST. Perhaps there is a better place for these to live?
 
-        public static string? GetPositionalArgumentStringValue(AttributeAst attribute, int attributeIndex, string? defaultValue=null)
+        // We decided to remove support for positional arguments, due to the way that PowerShell treats mixed positional and named arguments. 
+        // This does work, but until we figure out a better solution, should stay commented. 
+        //public static string? GetPositionalArgumentStringValue(AttributeAst attribute, int attributeIndex, string? defaultValue=null)
+        //{
+        //    return attribute.PositionalArguments.Count > attributeIndex 
+        //           && attribute.PositionalArguments[attributeIndex].GetType() == typeof(StringConstantExpressionAst)
+        //        ? ((StringConstantExpressionAst)attribute.PositionalArguments[attributeIndex]).Value : defaultValue;
+        //}
+
+        public static string GetNamedArgumentStringValue(AttributeAst attribute, string argumentName, string defaultValue="")
         {
-            return attribute.PositionalArguments.Count > attributeIndex 
-                   && attribute.PositionalArguments[attributeIndex].GetType() == typeof(StringConstantExpressionAst)
-                ? ((StringConstantExpressionAst)attribute.PositionalArguments[attributeIndex]).Value : defaultValue;
+            // Filter the named arguments for the one with the correct name
+            var matchingNamedArguments = attribute.NamedArguments.Where(x => x.ArgumentName == argumentName);
+            //PowerShell syntax ensures that argument names must be unique, so First() is safe
+            return matchingNamedArguments.Any() ? ConvertExpressionToString(matchingNamedArguments.First().Argument) : defaultValue;
+        }
+
+        public static List<string> GetNamedArgumentListValue(AttributeAst attribute, string argumentName, List<string> defaultValue)
+        {
+            // Filter the named arguments for the one with the correct name
+            var matchingNamedArguments = attribute.NamedArguments.Where(x => x.ArgumentName == argumentName);
+            //PowerShell syntax ensures that argument names must be unique, so First() is safe
+            return matchingNamedArguments.Any() ? ConvertExpressionToList(matchingNamedArguments.First().Argument) : defaultValue;
+        }
+
+        public static object GetNamedArgumentDefaultTypeValue(AttributeAst attribute, string argumentName, object defaultValue)
+        {
+            // Filter the named arguments for the one with the correct name
+            var matchingNamedArguments = attribute.NamedArguments.Where(x => x.ArgumentName == argumentName);
+            //PowerShell syntax ensures that argument names must be unique, so First() is safe
+            return matchingNamedArguments.Any() ? ConvertExpressionToDefaultType(matchingNamedArguments.First().Argument) : defaultValue;
+        }
+
+        public static object ConvertExpressionToDefaultType(ExpressionAst expression)
+        {
+            if (expression.GetType() == typeof(StringConstantExpressionAst))
+            {
+                return ((StringConstantExpressionAst)expression).Value;
+            }
+            else
+            {
+                return ConvertExpressionToList(expression);
+            }
+        }
+
+        public static string ConvertExpressionToString(ExpressionAst expression)
+        {
+            if (expression.GetType() == typeof(StringConstantExpressionAst))
+            {
+                return ((StringConstantExpressionAst)expression).Value;
+            }
+            return string.Empty;
         }
 
         /// <summary>
@@ -247,7 +295,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
         /// </summary>
         /// <param name="expressionAst"></param>
         /// <returns>List of values represented in the ExpressionAst</returns>
-        public static List<string>? ExtractOneOrMore(ExpressionAst expressionAst)
+        public static List<string> ConvertExpressionToList(ExpressionAst expressionAst)
         {
             if (expressionAst.GetType() == typeof(StringConstantExpressionAst)) 
             {
@@ -263,7 +311,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
                 }
                 return values;
             }
-            return null;
+            return new List<string>();
         }
 
         private static List<FileInfo> GetPowerShellFiles(DirectoryInfo baseDir, int depth=0)

@@ -16,7 +16,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.Common
         public const string DefaultDurableClientName = "starter";
         public const string DefaultEventHubOutputName = "EventHubOutput";
         public const string DefaultHttpAuthLevel = "anonymous";
-        public static List<string>? DefaultHttpMethods = new List<string>() { "GET", "POST" };
+        public static List<string> DefaultHttpMethods = new List<string>() { "GET", "POST" };
 
         internal class AttributeNames
         {

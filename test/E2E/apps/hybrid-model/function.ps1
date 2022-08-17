@@ -1,9 +1,9 @@
 using namespace System.Net
 using module AzureFunctions.PowerShell.SDK
 
-[Function('TestTrigger')]
+[Function(Name='TestTrigger')]
 param(
-    [HttpTrigger('anonymous', ('get', 'post'))]
+    [HttpTrigger(AuthLevel='function', Methods=('get'))]
     $Request, 
     $TriggerMetadata
 )

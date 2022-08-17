@@ -17,13 +17,12 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
         public override BindingInformation? ExtractBinding(AttributeAst attribute, ParameterAst parameter)
         {
             BindingInformation bindingInformation = new BindingInformation();
-            string? name = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0, Constants.DefaultDurableClientName);
+            string name = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Name", Constants.DefaultDurableClientName);
+
             bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;
-            if (name != null)
-            {
-                bindingInformation.Name = name;
-            }
+            bindingInformation.Name = name;
+
             return bindingInformation;
         }
     }
