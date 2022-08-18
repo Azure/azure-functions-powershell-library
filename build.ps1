@@ -69,7 +69,7 @@ function Get-FunctionsCoreToolsDir {
 function Deploy-FunctionsSDKModule {
     $ErrorActionPreference = 'Stop'
 
-    $publishDir = "./$RepoName/bin/$Configuration/$TargetFramework/publish/*" 
+    $publishDir = "./src/bin/$Configuration/$TargetFramework/publish/*" 
 
     $powerShellWorkerModuleDir = "$(Get-FunctionsCoreToolsDir)/workers/powershell/$PowerShellVersion/Modules/$ModuleName"
 

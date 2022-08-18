@@ -7,11 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="test\**" />
+    <EmbeddedResource Remove="test\**" />
+    <None Remove="test\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="test\E2E\apps\empty-app\" />
+    <Compile Update="resources\AzPowerShellSdkStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AzPowerShellSdkStrings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

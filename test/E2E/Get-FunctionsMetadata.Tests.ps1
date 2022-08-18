@@ -39,8 +39,15 @@ Describe 'Hybrid or legacy app' {
 
 Describe 'Duplicate binding names' {
     It 'Should throw an error when a function gets two bindings with the same name' {
-        { Get-FunctionsMetadata ("$PSScriptRoot/apps/duplicate-bindings")
-            | Should -Throw '*Multiple bindings with name Request in function TestTrigger*'}
+        { Get-FunctionsMetadata ("$PSScriptRoot/apps/duplicate-bindings") }
+            | Should -Throw '*Multiple bindings with name Request in function TestTrigger*'
+    }
+}
+
+Describe 'Not a function app' {
+    It 'Should throw an error when the cmdlet is executed on a path that is not a Function App (host.json check)' {
+        { Get-FunctionsMetadata ("$PSScriptRoot/apps/not-a-function-app") }
+            | Should -Throw '*host.json*'
     }
 }
 
@@ -53,6 +60,35 @@ Describe 'AdditionalInformaton before binding' {
     It 'The error should be non-terminating' {
         { Get-FunctionsMetadata ("$PSScriptRoot/apps/generic-binding-bad-order") -ErrorAction Ignore }
             | Should -Not -Throw 
+    }
+}
+
+Describe 'Function with no bindings' {
+    It 'Should throw an error when a function is declared without bindings (positive)' {
+        { Get-FunctionsMetadata ("$PSScriptRoot/apps/function-no-binding") -ErrorAction Stop }
+            | Should -Throw '*The following functions do not have any bindings: *'
+    }
+
+    It 'The error should be non-terminating' {
+        { Get-FunctionsMetadata ("$PSScriptRoot/apps/function-no-binding") -ErrorAction Ignore }
+            | Should -Not -Throw 
+    }
+}
+
+Describe 'Relative paths should work' {
+    It 'Relative paths directly from source' {
+        Push-Location $PSScriptRoot
+        { Get-FunctionsMetadata ("./apps/simple-durable") } 
+            | Should -Not -Throw 
+        Pop-Location
+    }
+    It 'Relative paths from a subfolder of source' {
+        Push-Location "$PSScriptRoot/apps/simple-durable"
+
+        { Get-FunctionsMetadata ("./../single-ps1app") } 
+            | Should -Not -Throw 
+        
+        Pop-Location
     }
 }
 

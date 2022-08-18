@@ -132,6 +132,9 @@
   <data name="FailedToParseFile" xml:space="preserve">
     <value>Couldn't parse the file: {0}</value>
   </data>
+  <data name="FunctionsWithNoBindings" xml:space="preserve">
+    <value>The following functions do not have any bindings: {0}</value>
+  </data>
   <data name="HybridModelDetected" xml:space="preserve">
     <value>This function app directory contains functions which rely on host indexing, please remove them or configure this app for host indexing</value>
   </data>
@@ -142,7 +145,7 @@
     <value>Must specify a valid binding direction</value>
   </data>
   <data name="InvalidFunctionsAppDirectory" xml:space="preserve">
-    <value>Functions app directory parameter is required and must be a valid directory</value>
+    <value>{0} is not a valid directory</value>
   </data>
   <data name="MalformedEventHubAttribute" xml:space="preserve">
     <value>Incorrectly formatted Event Hub attribute</value>
@@ -152,6 +155,9 @@
   </data>
   <data name="MissingDirection" xml:space="preserve">
     <value>The Direction is missing</value>
+  </data>
+  <data name="MissingHostJson" xml:space="preserve">
+    <value>{0} is not a valid Functions App - no host.json detected</value>
   </data>
   <data name="MissingName" xml:space="preserve">
     <value>The Name is missing</value>
