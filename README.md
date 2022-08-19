@@ -1,4 +1,12 @@
-# Project
+![azure-functions-logo][]
+
+|Branch|Status|
+|---|---|
+|main|[![Build Status](https://dev.azure.com/azfunc/Azure%20Functions/_apis/build/status/Azure.azure-functions-powershell-library?branchName=main)](https://dev.azure.com/azfunc/Azure%20Functions/_build/latest?definitionId=156&branchName=main)|
+
+[azure-functions-logo]: https://raw.githubusercontent.com/Azure/azure-functions-cli/master/src/Azure.Functions.Cli/npm/assets/azure-functions-logo-color-raster.png
+
+# Azure Functions PowerShell Libray
 
 > This repo has been populated by an initial template to help get you started. Please
 > make sure to update the content to build a great experience for community-building.
