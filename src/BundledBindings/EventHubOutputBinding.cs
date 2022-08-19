@@ -21,9 +21,9 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
             bindingInformation.Type = BindingType;
             bindingInformation.Direction = BindingDirection;
 
-            string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Name", Constants.DefaultEventHubOutputName);
-            string eventHubName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "EventHubName");
-            string connection = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Connection");
+            string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Name, Constants.DefaultEventHubOutputName);
+            string eventHubName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.EventHubName);
+            string connection = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Connection);
 
             bindingInformation.Name = bindingName;
 

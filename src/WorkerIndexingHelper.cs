@@ -230,11 +230,21 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
                 "Failed to add binding information", ErrorCategory.ObjectNotFound, bindingName));
         }
 
+
         // Everything below this point are static methods that may be used by classes implementing IBinding to extract information from 
         //   the AST. Perhaps there is a better place for these to live?
 
+
+
         // We decided to remove support for positional arguments, due to the way that PowerShell treats mixed positional and named arguments. 
-        // This does work, but until we figure out a better solution, should stay commented. 
+        // Essentially, positional arguments are passed in to constructors, but named arguments just set values for class properties directly, 
+        //   and are not considered when constructors are being run. 
+        // Using named arguments only allows us to be order-agnostic with parameters, is more descriptive, and requires fewer constructor definitions. 
+
+        
+        // Consequently, the method below does work, but unless we figure out a better solution to support both named and positional,
+        //   should stay commented. 
+
         //public static string? GetPositionalArgumentStringValue(AttributeAst attribute, int attributeIndex, string? defaultValue=null)
         //{
         //    return attribute.PositionalArguments.Count > attributeIndex 

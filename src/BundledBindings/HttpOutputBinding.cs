@@ -16,7 +16,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
 
         public override BindingInformation? ExtractBinding(AttributeAst attribute)
         {
-            string outputBindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Name", Constants.DefaultHttpResponseName);
+            string outputBindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Name, Constants.DefaultHttpResponseName);
             return Create(outputBindingName);
         }
 

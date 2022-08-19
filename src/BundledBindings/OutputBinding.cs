@@ -17,8 +17,8 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
         public override BindingInformation? ExtractBinding(AttributeAst attribute)
         {
             BindingInformation bindingInformation = new BindingInformation();
-            string bindingType = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Type");
-            string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Name");
+            string bindingType = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Type);
+            string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Name);
 
             List<string> problems = new List<string>();
 

@@ -26,9 +26,9 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
                 Name = parameter.Name.VariablePath.UserPath
             };
             
-            string bindingAuthLevel = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "AuthLevel", Constants.DefaultHttpAuthLevel);
-            object bindingMethods = WorkerIndexingHelper.GetNamedArgumentDefaultTypeValue(attribute, "Methods", Constants.DefaultHttpMethods);
-            string route = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Route");
+            string bindingAuthLevel = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.AuthLevel, Constants.DefaultHttpAuthLevel);
+            object bindingMethods = WorkerIndexingHelper.GetNamedArgumentDefaultTypeValue(attribute, Constants.BindingPropertyNames.Methods, Constants.DefaultHttpMethods);
+            string route = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Route);
 
             bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;

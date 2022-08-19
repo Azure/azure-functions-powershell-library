@@ -49,6 +49,22 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.Common
             public static string NOT_USED = "NOT_USED";
         }
 
+        internal class BindingPropertyNames
+        {
+            public const string BindingName = "BindingName";
+            public const string Name = "Name";
+            public const string Type = "Type";
+            public const string Value = "Value";
+            public static string Connection = "Connection";
+            public static string EventHubName = "EventHubName";
+            public static string ConsumerGroup = "ConsumerGroup";
+            public static string Cardinality = "Cardinality";
+            public static string AuthLevel = "AuthLevel";
+            public static string Methods = "Methods";
+            public static string Route = "Route";
+            public static string Chron = "Chron";
+        }
+
         internal class JsonPropertyNames
         {
             public const string EventHubName = "eventHubName";

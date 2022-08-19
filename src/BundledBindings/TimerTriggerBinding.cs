@@ -18,7 +18,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
         {
             BindingInformation bindingInformation = new BindingInformation();
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
-            string chronExpression = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Chron");
+            string chronExpression = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Chron);
             bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;
 

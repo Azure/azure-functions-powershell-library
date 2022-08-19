@@ -19,8 +19,8 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
             BindingInformation bindingInformation = new BindingInformation();
             bindingInformation.Direction = BindingDirection;
 
-            string bindingType = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Type");
-            string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Name");
+            string bindingType = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Type);
+            string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Name);
 
             List<string> problems = new List<string>();
 

@@ -22,10 +22,10 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
             bindingInformation.Direction = BindingDirection;
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
 
-            string eventHubName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "EventHubName");
-            string consumerGroup = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "ConsumerGroup");
-            string cardinality = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Cardinality");
-            string connection = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, "Connection");
+            string eventHubName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.EventHubName);
+            string consumerGroup = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.ConsumerGroup);
+            string cardinality = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Cardinality);
+            string connection = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Connection);
 
             if (!string.IsNullOrWhiteSpace(eventHubName) && !string.IsNullOrWhiteSpace(consumerGroup) && !string.IsNullOrWhiteSpace(cardinality) && !string.IsNullOrWhiteSpace(connection))
             {
