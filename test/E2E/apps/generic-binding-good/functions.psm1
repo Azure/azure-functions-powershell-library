@@ -3,6 +3,8 @@ using module AzureFunctions.PowerShell.SDK
 
 function TestTrigger {
     [Function()]
+    [OutputBinding(Type='http', Name='Response')]
+    [AdditionalInformation(BindingName='Response', Name='authLevel', Value='anonymous')]
     param(
         [InputBinding(Type='httpTrigger')]
         [AdditionalInformation(BindingName='Request', Name='authLevel', Value='anonymous')]
