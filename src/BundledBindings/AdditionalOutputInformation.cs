@@ -8,7 +8,7 @@ using System.Management.Automation.Language;
 
 namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
 {
-    public class AdditionalOutputInformation : IOutputBinding
+    public class AdditionalOutputInformation : IOutputBinding, IAdditionalInformation
     {
         public override string BindingAttributeName => Constants.AttributeNames.AdditionalInformation;
 
@@ -16,37 +16,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
 
         public override BindingInformation? ExtractBinding(AttributeAst attribute)
         {
-            string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.BindingName);
-            string name = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Name);
-            object value = WorkerIndexingHelper.GetNamedArgumentDefaultTypeValue(attribute, Constants.BindingPropertyNames.Value, "");
-
-            List<string> problems = new List<string>();
-
-            if (string.IsNullOrWhiteSpace(bindingName))
-            {
-                problems.Add(AzPowerShellSdkStrings.MissingBindingName);
-            }
-
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                problems.Add(AzPowerShellSdkStrings.MissingName);
-            }
-
-            if (value.GetType() == typeof(string) && string.IsNullOrWhiteSpace((string)value))
-            {
-                problems.Add(AzPowerShellSdkStrings.MissingValue);
-            }
-
-            if (problems.Count > 0)
-            {
-                throw new Exception(string.Format(AzPowerShellSdkStrings.AdditionalInformationProblemsExist, string.Join("\n", problems)));
-            }
-
-            //This condition will never be false but hey, type enforcement makes us add it anyway thanks logic
-            if (!string.IsNullOrEmpty(bindingName) && !string.IsNullOrEmpty(name) && value != null) 
-            {
-                WorkerIndexingHelper.AddBindingInformation(bindingName, name, value);
-            }
+            ((IAdditionalInformation)this).AddAdditionalInformation(attribute);
 
             return null;
         }
