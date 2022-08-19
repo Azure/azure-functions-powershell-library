@@ -25,30 +25,21 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
             {
                 Name = parameter.Name.VariablePath.UserPath
             };
-            //Todo: Support for named arguments: https://github.com/Azure/azure-functions-powershell-library/issues/11
-            string? bindingAuthLevel = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0, Constants.DefaultHttpAuthLevel);
-            List<string>? bindingMethods = attribute.PositionalArguments.Count > 1 ? 
-                                                WorkerIndexingHelper.ExtractOneOrMore(attribute.PositionalArguments[1]) : 
-                                                Constants.DefaultHttpMethods;
-            string? route = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 2);
-            if (bindingMethods == null)
-            {
-                bindingMethods = Constants.DefaultHttpMethods;
-            }
+            
+            string bindingAuthLevel = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.AuthLevel, Constants.DefaultHttpAuthLevel);
+            object bindingMethods = WorkerIndexingHelper.GetNamedArgumentDefaultTypeValue(attribute, Constants.BindingPropertyNames.Methods, Constants.DefaultHttpMethods);
+            string route = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Route);
+
             bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;
-            if (bindingAuthLevel != null)
-            {
-                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.AuthLevel, bindingAuthLevel);
-            }
-            if (bindingMethods != null)
-            {
-                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Methods, bindingMethods);
-            }
-            if (route != null)
+
+            bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.AuthLevel, bindingAuthLevel);
+            bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Methods, bindingMethods);
+            if (!string.IsNullOrWhiteSpace(route))
             {
                 bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Route, route);
             }
+
             return bindingInformation;
         }
         

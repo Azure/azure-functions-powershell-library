@@ -1,16 +1,9 @@
 using namespace System.Net
 using module AzureFunctions.PowerShell.SDK
 
-[Function('TestTrigger')]
+[Function(Name='TestTrigger')]
 param(
-    [HttpTrigger('anonymous', ('get', 'post'))]
+    [HttpTrigger(AuthLevel='function', Methods=('get'))]
     $Request, 
     $TriggerMetadata
-
-
-$value =  ([HttpResponseContext]@{
-    StatusCode = [HttpStatusCode]::OK
-    Body = 'The Http trigger invocation was successful'
-})
-
-$value | Push-OutputBinding -Name Response
+# We are missing the closing parenthesis here, making this an invalid .ps1 file

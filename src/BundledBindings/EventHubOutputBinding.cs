@@ -17,14 +17,18 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
         public override BindingInformation? ExtractBinding(AttributeAst attribute)
         {
             BindingInformation bindingInformation = new BindingInformation();
+
             bindingInformation.Type = BindingType;
             bindingInformation.Direction = BindingDirection;
-            string? bindingName = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0, Constants.DefaultEventHubOutputName);
-            string? eventHubName = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 1);
-            string? connection = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 2);
-            if (bindingName is not null && eventHubName is not null && connection is not null)
+
+            string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Name, Constants.DefaultEventHubOutputName);
+            string eventHubName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.EventHubName);
+            string connection = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Connection);
+
+            bindingInformation.Name = bindingName;
+
+            if (!string.IsNullOrWhiteSpace(eventHubName) && !string.IsNullOrWhiteSpace(connection))
             {
-                bindingInformation.Name = bindingName;
                 bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.EventHubName, eventHubName);
                 bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Connection, connection);
                 return bindingInformation;

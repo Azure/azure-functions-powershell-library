@@ -4,9 +4,9 @@ using module AzureFunctions.PowerShell.SDK
 function TestTrigger {
     [Function()]
     param(
-        [AdditionalInformation('Request', 'authLevel', 'anonymous')]
-        [InputBinding('httpTrigger')]
-        [AdditionalInformation('Request', 'methods', ('GET', 'POST'))]
+        [AdditionalInformation(BindingName='Request', Name='authLevel', Value='anonymous')]
+        [InputBinding(Type='httpTrigger')]
+        [AdditionalInformation(BindingName='Request', Name='methods', Value=('GET', 'POST'))]
         $Request, 
         $TriggerMetadata
     )

@@ -18,13 +18,17 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
         {
             BindingInformation bindingInformation = new BindingInformation();
             bindingInformation.Name = parameter.Name.VariablePath.UserPath;
-            string? chronExpression = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0);
+            string chronExpression = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Chron);
             bindingInformation.Direction = BindingDirection;
             bindingInformation.Type = BindingType;
-            if (chronExpression != null)
+
+            if (string.IsNullOrWhiteSpace(chronExpression))
             {
-                bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Schedule, chronExpression);
+                throw new Exception();
             }
+
+            bindingInformation.otherInformation.Add(Constants.JsonPropertyNames.Schedule, chronExpression);
+            
             return bindingInformation;
         }
     }

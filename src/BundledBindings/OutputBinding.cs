@@ -17,16 +17,16 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
         public override BindingInformation? ExtractBinding(AttributeAst attribute)
         {
             BindingInformation bindingInformation = new BindingInformation();
-            string? bindingType = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 0);
-            string? bindingName = WorkerIndexingHelper.GetPositionalArgumentStringValue(attribute, 1);
+            string bindingType = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Type);
+            string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Name);
 
             List<string> problems = new List<string>();
 
-            if (string.IsNullOrEmpty(bindingType))
+            if (string.IsNullOrWhiteSpace(bindingType))
             {
                 problems.Add(AzPowerShellSdkStrings.MissingType);
             }
-            if (string.IsNullOrEmpty(bindingName))
+            if (string.IsNullOrWhiteSpace(bindingName))
             {
                 problems.Add(AzPowerShellSdkStrings.MissingBindingName);
             }
@@ -38,11 +38,8 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
                 throw new Exception(AzPowerShellSdkStrings.OutputBindingProblemsExist + string.Join("\n", problems));
             }
 
-            if (!string.IsNullOrEmpty(bindingType) && !string.IsNullOrEmpty(bindingName))
-            {
-                bindingInformation.Type = bindingType;
-                bindingInformation.Name = bindingName;
-            }
+            bindingInformation.Type = bindingType;
+            bindingInformation.Name = bindingName;
 
             return bindingInformation;
         }
