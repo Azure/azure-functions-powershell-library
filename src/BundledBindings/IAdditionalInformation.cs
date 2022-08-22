@@ -1,20 +1,16 @@
-﻿//
-// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-//
-
-using Microsoft.Azure.Functions.PowerShell.SDK.Common;
+﻿using Microsoft.Azure.Functions.PowerShell.SDK.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation.Language;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
 {
-    public class AdditionalInformation : IInputBinding
+    internal interface IAdditionalInformation
     {
-        public override string BindingAttributeName => Constants.AttributeNames.AdditionalInformation;
-
-        public override string BindingType => Constants.BindingNames.NOT_USED;
-
-        public override BindingInformation? ExtractBinding(AttributeAst attribute, ParameterAst parameter)
+        public void AddAdditionalInformation(AttributeAst attribute)
         {
             string bindingName = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.BindingName);
             string name = WorkerIndexingHelper.GetNamedArgumentStringValue(attribute, Constants.BindingPropertyNames.Name);
@@ -43,12 +39,10 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK.BundledBindings
             }
 
             //This condition will never be false but hey, type enforcement makes us add it anyway thanks logic
-            if (!string.IsNullOrEmpty(bindingName) && !string.IsNullOrEmpty(name) && value != null) 
+            if (!string.IsNullOrEmpty(bindingName) && !string.IsNullOrEmpty(name) && value != null)
             {
                 WorkerIndexingHelper.AddBindingInformation(bindingName, name, value);
             }
-
-            return null;
         }
     }
 }
