@@ -135,7 +135,7 @@ internal class {0} {{
     internal static global::System.Resources.ResourceManager ResourceManager {{
         get {{
             if (object.ReferenceEquals(resourceMan, null)) {{
-                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Azure.Functions.PowerShell.SDK.resources.{0}", typeof({0}).Assembly);
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AzureFunctions.PowerShell.SDK.resources.{0}", typeof({0}).Assembly);
                 resourceMan = temp;
             }}
 
