@@ -36,7 +36,6 @@ param(
 $PowerShellVersion = '7.2'
 $TargetFramework = 'net6.0'
 $ModuleName = 'AzureFunctions.PowerShell.SDK'
-$RepoName = 'Microsoft.Azure.Functions.PowerShell.SDK'
 
 Write-Host "Build configuration: $Configuration"
 
