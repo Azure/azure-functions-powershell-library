@@ -33,9 +33,14 @@ param(
 
 #Requires -Version 7.2
 
-$PowerShellVersion = '7.2'
+$PowerShellVersion = '7.4'
 $TargetFramework = 'net6.0'
 $ModuleName = 'AzureFunctions.PowerShell.SDK'
+$ModuleFiles = @(
+    "AzureFunctions.PowerShell.SDK.dll"
+    "AzureFunctions.AttributeDefinitions.ps1"
+    "AzureFunctions.PowerShell.SDK.psd1"
+)
 
 Write-Host "Build configuration: $Configuration"
 
@@ -68,10 +73,13 @@ function Get-FunctionsCoreToolsDir {
 function Deploy-FunctionsSDKModule {
     $ErrorActionPreference = 'Stop'
 
-    $publishDir = "./src/bin/$Configuration/$TargetFramework/publish/*" 
+    $publishDir = "./src/bin/$Configuration/$TargetFramework/publish"
 
-    $powerShellWorkerModuleDir = "$(Get-FunctionsCoreToolsDir)/workers/powershell/$PowerShellVersion/Modules/$ModuleName"
-
+    $manifestName = $ModuleName + '.psd1'
+    $manifestFilePath = (Get-ChildItem -Path "$(Get-FunctionsCoreToolsDir)/workers/powershell/$PowerShellVersion/Modules/$ModuleName/*/$manifestName") |
+                        Select-Object -First 1 | ForEach-Object { $_.FullName }
+    Write-Log "manifest file path: $manifestFilePath"
+    $powerShellWorkerModuleDir = Split-Path $manifestFilePath
     Write-Log "Deploying module to $powerShellWorkerModuleDir..."
 
     if (-not $IsWindows) {
@@ -82,8 +90,14 @@ function Deploy-FunctionsSDKModule {
         New-Item $powerShellWorkerModuleDir -ItemType directory
     }
 
-    Remove-Item -Path $powerShellWorkerModuleDir/* -Recurse -Force
-    Copy-Item -Path $publishDir -Destination $powerShellWorkerModuleDir -Recurse -Force
+    Remove-Item -Path $powerShellWorkerModuleDir/* -Recurse -Force -ErrorAction SilentlyContinue
+
+    foreach ($fileName in $ModuleFiles)
+    {
+        $sourceFilePath = Join-Path $publishDir $fileName
+        Write-Log "Copying file '$sourceFilePath' to  $powerShellWorkerModuleDir"
+        Copy-Item -Path $sourceFilePath -Destination $powerShellWorkerModuleDir -Recurse -Force
+    }
 
     Write-Log "Deployed module to $powerShellWorkerModuleDir"
 }
