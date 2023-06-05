@@ -11,8 +11,8 @@ $DotnetSDKVersionRequirements = @{
 
     # .NET SDK 3.1 is required by the Microsoft.ManifestTool.dll tool
     '3.1' = @{
-        MinimalPatch = '422'
-        DefaultPatch = '422'
+        MinimalPatch = '426'
+        DefaultPatch = '426'
     }
 
     '6.0' = @{
