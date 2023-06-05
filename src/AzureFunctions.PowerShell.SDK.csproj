@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <Product>Azure Functions PowerShell SDK</Product>
+    <AssemblyName>AzureFunctions.PowerShell.SDK</AssemblyName>
+    <LangVersion>Latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -13,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.1" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.11" />
   </ItemGroup>
 
   <ItemGroup>

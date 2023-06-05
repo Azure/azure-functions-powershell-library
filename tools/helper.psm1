@@ -11,13 +11,13 @@ $DotnetSDKVersionRequirements = @{
 
     # .NET SDK 3.1 is required by the Microsoft.ManifestTool.dll tool
     '3.1' = @{
-        MinimalPatch = '419'
-        DefaultPatch = '419'
+        MinimalPatch = '426'
+        DefaultPatch = '426'
     }
 
     '6.0' = @{
-        MinimalPatch = '300'
-        DefaultPatch = '300'
+        MinimalPatch = '408'
+        DefaultPatch = '408'
     }
 }
 
@@ -135,7 +135,7 @@ internal class {0} {{
     internal static global::System.Resources.ResourceManager ResourceManager {{
         get {{
             if (object.ReferenceEquals(resourceMan, null)) {{
-                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Azure.Functions.PowerShell.SDK.resources.{0}", typeof({0}).Assembly);
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AzureFunctions.PowerShell.SDK.resources.{0}", typeof({0}).Assembly);
                 resourceMan = temp;
             }}
 

@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Management.Automation.Language;
+using System.Text;
 
 namespace Microsoft.Azure.Functions.PowerShell.SDK
 {
@@ -73,14 +74,25 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
         private static IEnumerable<FunctionInformation> IndexFunctionsInFile(FileInfo powerShellFile)
         {
             List<FunctionInformation> fileFunctions = new List<FunctionInformation>();
+
+            // Try to parse the PowerShell file.
+            // TODO: Need to follow up with the PowerShell team on this issue https://github.com/Azure/azure-functions-powershell-library/issues/43 before GA.
             ScriptBlockAst? fileAst = Parser.ParseFile(powerShellFile.FullName, out _, out ParseError[] errors);
+
             if (errors.Any())
             {
-                errorRecords.Add(new ErrorRecord(new Exception(string.Format(AzPowerShellSdkStrings.FailedToParseFile, 
-                                                                             powerShellFile.FullName)), 
-                                                 "Failed to parse file", ErrorCategory.ParserError, powerShellFile));
+                var stringBuilder = new StringBuilder();
+                foreach (var error in errors)
+                {
+                    stringBuilder.AppendLine(error.ToString());
+                }
+
+                var errorId = "FailedToParseFile";
+                var errorMessage = string.Format(AzPowerShellSdkStrings.FailedToParseFile, powerShellFile.FullName, stringBuilder.ToString());
+                errorRecords.Add(new ErrorRecord(new Exception(errorMessage), errorId, ErrorCategory.ParserError, powerShellFile));
                 return fileFunctions;
             }
+
             if (string.Equals(powerShellFile.Extension, Constants.Ps1FileExtension, StringComparison.OrdinalIgnoreCase)) 
             {
                 // parse only the file param block, return one RpcFunctionMetadata assuming the file is the entry point
@@ -109,6 +121,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
                     // but shall not be indexed as an Azure Function
                 }
             }
+
             return fileFunctions;
         }
 
@@ -227,7 +240,7 @@ namespace Microsoft.Azure.Functions.PowerShell.SDK
             }
 
             errorRecords.Add(new ErrorRecord(new Exception(string.Format(AzPowerShellSdkStrings.AdditionalInformationNoSuchBinding, name, bindingName)),
-                "Failed to add binding information", ErrorCategory.ObjectNotFound, bindingName));
+                "FailedToAddBindingInformation", ErrorCategory.ObjectNotFound, bindingName));
         }
 
 

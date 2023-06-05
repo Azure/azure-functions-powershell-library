@@ -26,7 +26,7 @@ internal class AzPowerShellSdkStrings {
     internal static global::System.Resources.ResourceManager ResourceManager {
         get {
             if (object.ReferenceEquals(resourceMan, null)) {
-                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Azure.Functions.PowerShell.SDK.resources.AzPowerShellSdkStrings", typeof(AzPowerShellSdkStrings).Assembly);
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AzureFunctions.PowerShell.SDK.resources.AzPowerShellSdkStrings", typeof(AzPowerShellSdkStrings).Assembly);
                 resourceMan = temp;
             }
 
