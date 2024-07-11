@@ -6,7 +6,7 @@ jobs:
           path: $(Build.ArtifactStagingDirectory)/dropOutput
           artifact: drop
           sbomBuildDropPath: '$(Build.ArtifactStagingDirectory)/dropInput'
-          sbomPackageName: 'Azure Functions PowerShell Library'
+          sbomPackageName: 'AzureFunctions PowerShell SDK'
           sbomBuildComponentPath: '$(Build.SourcesDirectory)'
     steps:
       - pwsh: ./build.ps1 -NoBuild -Bootstrap
@@ -26,5 +26,5 @@ jobs:
 
       - pwsh: |
           mkdir $(Build.ArtifactStagingDirectory)/dropOutput -Force | Out-Null
-          Compress-Archive -Path $(Build.ArtifactStagingDirectory)/dropInput/AzureFunctions.PowerShell.OpenTelemetry.SDK/* -DestinationPath $(Build.ArtifactStagingDirectory)/dropOutput/AzureFunctions.PowerShell.OpenTelemetry.SDK.zip
+          Compress-Archive -Path $(Build.ArtifactStagingDirectory)/dropInput/* -DestinationPath $(Build.ArtifactStagingDirectory)/dropOutput/AzureFunctions.PowerShell.SDK.zip
         displayName: "Zip Module"
