@@ -169,17 +169,10 @@ if ($Test.IsPresent) {
 
     # Add the folder containing the newly renamed module to the PSModulePath
 
-    if ($IsWindows) {
-        $separatorChar = ";"
-    }
-    else {
-        $separatorChar = ":"
-    }
-
-    $psMP = $env:PSModulePath -Split $separatorChar
+    $psMP = $env:PSModulePath -Split [System.IO.Path]::PathSeparator
     if (!($psMP -contains $moduleLocation)) {
         $psMP += $moduleLocation
-        $psMP = $psMP -Join $separatorChar
+        $psMP = $psMP -Join [System.IO.Path]::PathSeparator
         $env:PSModulePath = $psMP
     }
 

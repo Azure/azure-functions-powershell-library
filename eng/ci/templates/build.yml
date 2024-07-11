@@ -6,7 +6,7 @@ jobs:
           path: $(Build.ArtifactStagingDirectory)/dropOutput
           artifact: drop
           sbomBuildDropPath: '$(Build.ArtifactStagingDirectory)/dropInput'
-          sbomPackageName: 'Azure Functions PowerShell OpenTelemetry SDK'
+          sbomPackageName: 'Azure Functions PowerShell Library'
           sbomBuildComponentPath: '$(Build.SourcesDirectory)'
     steps:
       - pwsh: ./build.ps1 -NoBuild -Bootstrap
