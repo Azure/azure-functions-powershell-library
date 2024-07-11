@@ -157,8 +157,6 @@ if ($Test.IsPresent) {
     $publishDir = "$PSScriptRoot/src/bin/$Configuration/$TargetFramework/publish/*" 
     $moduleDir = "$PSScriptRoot/src/bin/$Configuration/$TargetFramework/$ModuleName" 
 
-    $module
-
     $moduleLocation = "$PSScriptRoot/src/bin/$Configuration/$TargetFramework" 
 
     # Copy the module into another folder with the correct name
