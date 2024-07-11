@@ -157,6 +157,8 @@ if ($Test.IsPresent) {
     $publishDir = "$PSScriptRoot/src/bin/$Configuration/$TargetFramework/publish/*" 
     $moduleDir = "$PSScriptRoot/src/bin/$Configuration/$TargetFramework/$ModuleName" 
 
+    $module
+
     $moduleLocation = "$PSScriptRoot/src/bin/$Configuration/$TargetFramework" 
 
     # Copy the module into another folder with the correct name
@@ -168,10 +170,18 @@ if ($Test.IsPresent) {
     Copy-Item -Path $publishDir -Destination $moduleDir -Recurse -Force
 
     # Add the folder containing the newly renamed module to the PSModulePath
-    $psMP = $env:PSModulePath -Split ";"
+
+    if ($IsWindows) {
+        $separatorChar = ";"
+    }
+    else {
+        $separatorChar = ":"
+    }
+
+    $psMP = $env:PSModulePath -Split $separatorChar
     if (!($psMP -contains $moduleLocation)) {
         $psMP += $moduleLocation
-        $psMP = $psMP -Join ";"
+        $psMP = $psMP -Join $separatorChar
         $env:PSModulePath = $psMP
     }
 
