@@ -1,0 +1,30 @@
+jobs:
+  - job:
+    templateContext:
+      outputs:
+        - output: pipelineArtifact
+          path: $(Build.ArtifactStagingDirectory)/dropOutput
+          artifact: drop
+          sbomBuildDropPath: '$(Build.ArtifactStagingDirectory)/dropInput'
+          sbomPackageName: 'AzureFunctions PowerShell SDK'
+          sbomBuildComponentPath: '$(Build.SourcesDirectory)'
+    steps:
+      - pwsh: ./build.ps1 -NoBuild -Bootstrap
+        displayName: 'Installing dependencies'
+
+      - pwsh: |
+          $ErrorActionPreference = "Stop"
+          ./build.ps1 -Clean -Configuration Release
+        displayName: 'Building PowerShell module'
+
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: "$(System.DefaultWorkingDirectory)/src/bin/Release/net6.0"
+          Contents: '**'
+          TargetFolder: "$(Build.ArtifactStagingDirectory)/dropInput"
+        displayName: "Copy package to artifacts directory"
+
+      - pwsh: |
+          mkdir $(Build.ArtifactStagingDirectory)/dropOutput -Force | Out-Null
+          Compress-Archive -Path $(Build.ArtifactStagingDirectory)/dropInput/* -DestinationPath $(Build.ArtifactStagingDirectory)/dropOutput/AzureFunctions.PowerShell.SDK.zip
+        displayName: "Zip Module"

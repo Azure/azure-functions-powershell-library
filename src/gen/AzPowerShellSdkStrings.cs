@@ -97,7 +97,7 @@ internal class AzPowerShellSdkStrings {
 
     /// <summary>
     /// Looks up a localized string similar to 
-    ///   Couldn't parse the file: {0}
+    ///   Failed to parse file '{0}'. Error information: '{1}'
     /// </summary>
     internal static string FailedToParseFile {
         get {

@@ -168,10 +168,11 @@ if ($Test.IsPresent) {
     Copy-Item -Path $publishDir -Destination $moduleDir -Recurse -Force
 
     # Add the folder containing the newly renamed module to the PSModulePath
-    $psMP = $env:PSModulePath -Split ";"
+
+    $psMP = $env:PSModulePath -Split [System.IO.Path]::PathSeparator
     if (!($psMP -contains $moduleLocation)) {
         $psMP += $moduleLocation
-        $psMP = $psMP -Join ";"
+        $psMP = $psMP -Join [System.IO.Path]::PathSeparator
         $env:PSModulePath = $psMP
     }
 
