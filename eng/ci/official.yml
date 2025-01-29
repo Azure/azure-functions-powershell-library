@@ -4,6 +4,16 @@ trigger:
     include:
       - main
 
+schedules:
+- cron: "0 0 1/7 * *"
+  displayName: Daily midnight build
+  branches:
+    include:
+    - dev
+    - v4.x/*
+    - v3.x/*
+  always: true
+
 # CI only, does not trigger on PRs.
 pr: none
 
