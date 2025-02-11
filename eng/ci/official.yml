@@ -9,9 +9,7 @@ schedules:
   displayName: Daily midnight build
   branches:
     include:
-    - dev
-    - v4.x/*
-    - v3.x/*
+    - main
   always: true
 
 # CI only, does not trigger on PRs.
