@@ -4,7 +4,7 @@
 |---|---|
 |main|[![Build Status](https://dev.azure.com/azfunc/Azure%20Functions/_apis/build/status/Azure.azure-functions-powershell-library?branchName=main)](https://dev.azure.com/azfunc/Azure%20Functions/_build/latest?definitionId=156&branchName=main)|
 
-[azure-functions-logo]: https://raw.githubusercontent.com/Azure/azure-functions-cli/master/src/Azure.Functions.Cli/npm/assets/azure-functions-logo-color-raster.png
+[azure-functions-logo]: https://raw.githubusercontent.com/Azure/azure-functions-cli/refs/heads/main/eng/res/functions.png
 
 # Azure Functions PowerShell Library
 
