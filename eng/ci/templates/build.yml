@@ -9,6 +9,9 @@ jobs:
           sbomPackageName: 'AzureFunctions PowerShell SDK'
           sbomBuildComponentPath: '$(Build.SourcesDirectory)'
     steps:
+      - task: NuGetAuthenticate@1
+        displayName: 'Authenticate to package feed'
+
       - pwsh: ./build.ps1 -NoBuild -Bootstrap
         displayName: 'Installing dependencies'
 
