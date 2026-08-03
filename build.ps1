@@ -36,6 +36,8 @@ param(
 $PowerShellVersion = '7.4'
 $TargetFramework = 'net6.0'
 $ModuleName = 'AzureFunctions.PowerShell.SDK'
+$SolutionPath = Join-Path $PSScriptRoot 'azure-functions-powershell-library.sln'
+$NuGetConfigPath = Join-Path $PSScriptRoot 'NuGet.config'
 $ModuleFiles = @(
     "AzureFunctions.PowerShell.SDK.dll"
     "AzureFunctions.AttributeDefinitions.ps1"
@@ -133,7 +135,29 @@ if (!$NoBuild.IsPresent) {
 
     Write-Host "Building at $PSScriptRoot"
 
-    dotnet publish -c $Configuration "/p:BuildNumber=$BuildNumber" $PSScriptRoot
+    $restoreArguments = @(
+        'restore'
+        $SolutionPath
+        '--configfile'
+        $NuGetConfigPath
+    )
+    & dotnet @restoreArguments
+    if ($LASTEXITCODE -ne 0) {
+        throw 'dotnet restore failed.'
+    }
+
+    $publishArguments = @(
+        'publish'
+        $SolutionPath
+        '--configuration'
+        $Configuration
+        '--no-restore'
+        "/p:BuildNumber=$BuildNumber"
+    )
+    & dotnet @publishArguments
+    if ($LASTEXITCODE -ne 0) {
+        throw 'dotnet publish failed.'
+    }
 
     $publishDir = "./src/bin/$Configuration/$TargetFramework/publish" 
     $buildDir = "./src/bin/$Configuration/$TargetFramework" 
